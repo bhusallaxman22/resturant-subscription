@@ -28,5 +28,8 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.8"
+  },
+  "dependencies": {
+    "dot-env": "^0.0.1"
   }
 }
