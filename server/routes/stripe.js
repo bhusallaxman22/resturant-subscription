@@ -81,13 +81,14 @@ router.post("/confirm-payment", authMiddleware, async (req, res) => {
 });
 
 // Utility function to determine the next delivery date
-function calculateNextDeliveryDate(mealPlanId) {
+function calculateNextDeliveryDate() {
   const today = new Date();
-  if (mealPlanId === "2-meals-per-week") {
-    return today.getDay() < 4 ? new Date().setDate(today.getDate() + (4 - today.getDay())) : new Date().setDate(today.getDate() + (7 - today.getDay() + 1));
-  } else {
-    return new Date().setDate(today.getDate() + (7 - today.getDay() + 1)); // Default to next Monday
-  }
+  const dayOfWeek = today.getDay();
+  const deliveryDays = calculateDeliveryDays(dayOfWeek);
+  const daysToAdd = deliveryDays.includes(dayOfWeek) ? 0 : 1;
+  const nextDeliveryDate = new Date(today);
+  nextDeliveryDate.setDate(today.getDate() + daysToAdd);
+  return nextDeliveryDate;
 }
 
 module.exports = router;

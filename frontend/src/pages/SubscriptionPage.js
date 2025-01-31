@@ -3,25 +3,28 @@ import axios from "axios";
 import {
   Container,
   Typography,
-  Card,
-  CardContent,
   Button,
   CircularProgress,
-  Grid,
   Box,
   Chip,
+  useTheme,
 } from "@mui/material";
-import {
-  showSuccessToast,
-  showErrorToast,
-} from "../components/ToastNotification";
+import Grid from "@mui/material/Grid2";
 import { useNavigate } from "react-router-dom";
+import CardWrapper from "../components/CardWrapper";
+import DetailItem from "../components/DetailItem";
+import StatusChip from "../components/StatusChip";
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import SubscriptionIcon from '@mui/icons-material/CardMembership';
 
 const SubscriptionPage = () => {
+  const theme = useTheme();
   const [mealPlans, setMealPlans] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchData();
@@ -80,111 +83,187 @@ const SubscriptionPage = () => {
   };
 
   if (loading) {
-    return <CircularProgress sx={{ display: "block", margin: "20px auto" }} />;
+    return (
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}>
+        <CircularProgress size={60} thickness={4} />
+      </Box>
+    );
   }
 
   return (
-    <Container>
-      <Typography variant="h4" align="center" gutterBottom sx={{ mb: 4 }}>
-        Manage Your Subscription
+    <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Typography variant="h3" sx={{
+        mb: 8,
+        fontWeight: 700,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2
+      }}>
+        <SubscriptionIcon fontSize="large" />
+        Meal Plan Subscription
       </Typography>
 
       {subscription && (
-        <Box
-          sx={{
-            p: 4,
-            mb: 4,
-            borderRadius: 2,
-            boxShadow: 3,
-            backgroundColor: "#f9f9f9",
-          }}
+        <CardWrapper
+          icon={<LocalDiningIcon />}
+          title="Active Subscription"
         >
-          <Typography variant="h5" gutterBottom>
-            Your Current Subscription
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Plan:</strong> {subscription.mealPlan.name}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Description:</strong> {subscription.mealPlan.description}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Price:</strong> ${subscription.mealPlan.price.toFixed(2)}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Meals per week:</strong> {subscription.mealPlan.mealsPerWeek}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Delivery Days:</strong>{" "}
-            {subscription.mealPlan.deliveryDays.join(", ")}
-          </Typography>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleCancelSubscription}
-            sx={{ mt: 2 }}
-          >
-            Cancel Subscription
-          </Button>
-        </Box>
+          <Grid container spacing={4} sx={{ p: 3 }}>
+            <Grid item xs={12} md={6}>
+              <DetailItem label="Plan Name" value={subscription.mealPlan?.name} />
+              <DetailItem
+                label="Description"
+                value={subscription.mealPlan?.description}
+                stack
+              />
+              <DetailItem
+                label="Price"
+                value={`$${subscription.mealPlan?.price.toFixed(2)}`}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DetailItem
+                label="Meals Per Week"
+                value={subscription.mealPlan?.mealsPerWeek}
+              />
+              <DetailItem
+                label="Delivery Days"
+                value={subscription.mealPlan?.deliveryDays.join(", ")}
+                stack
+              />
+              <Box sx={{
+                mt: 4,
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 2
+              }}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleCancelSubscription}
+                  sx={{
+                    px: 4,
+                    '&:hover': {
+                      backgroundColor: theme.palette.error.light,
+                      color: theme.palette.error.contrastText
+                    }
+                  }}
+                >
+                  Cancel Subscription
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
+        </CardWrapper>
       )}
 
-      <Typography variant="h5" gutterBottom>
-        Available Plans
+      <Typography variant="h4" sx={{
+        mb: 6,
+        fontWeight: 600,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2
+      }}>
+        <RestaurantMenuIcon />
+        Available Meal Plans
       </Typography>
-      <Grid container spacing={3}>
+
+      <Grid container spacing={4}>
         {mealPlans.map((plan) => (
           <Grid item xs={12} md={4} key={plan._id}>
-            <Card
+            <CardWrapper
               sx={{
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor:
-                  subscription?.mealPlan._id === plan._id
-                    ? "#e0f7fa"
-                    : "#fff", // Highlight if it's the subscribed plan
+                height: '100%',
+                border: subscription?.mealPlan?._id === plan._id
+                  ? `2px solid ${theme.palette.primary.main}`
+                  : null,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: theme.shadows[4]
+                }
               }}
+              icon={<LocalDiningIcon />}
+              title={plan.name}
             >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
                   {plan.name}
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 2 }}>
-                  {plan.description}
-                </Typography>
-                <Chip
-                  label={`$${plan.price.toFixed(2)}`}
-                  color="primary"
-                  variant="outlined"
-                  sx={{ mb: 1 }}
-                />
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  <strong>Meals per week:</strong> {plan.mealsPerWeek}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  <strong>Delivery Days:</strong>{" "}
-                  {plan.deliveryDays.join(", ")}
-                </Typography>
-                {subscription?.mealPlan._id === plan._id ? (
+                <Box sx={{ mb: 3 }}>
                   <Chip
-                    label="Currently Subscribed"
-                    color="success"
-                    sx={{ mt: 2 }}
+                    label={`$${plan.price.toFixed(2)}/week`}
+                    color="primary"
+                    sx={{
+                      px: 2,
+                      py: 1,
+                      fontSize: '1.1rem',
+                      borderRadius: 2,
+                      backgroundColor: theme.palette.primary.light,
+                      color: theme.palette.primary.contrastText
+                    }}
                   />
+                </Box>
+
+                <DetailItem
+                  label="Description"
+                  value={plan.description}
+                  stack
+                  valueStyle={{ color: theme.palette.text.secondary }}
+                />
+
+                <Grid container spacing={1} sx={{ my: 2 }}>
+                  <Grid item xs={6}>
+                    <DetailItem
+                      label="Meals/Week"
+                      value={plan.mealsPerWeek}
+                      stack
+                      valueStyle={{ fontWeight: 600 }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <DetailItem
+                      label="Delivery Days"
+                      value={plan.deliveryDays.join(", ")}
+                      stack
+                      valueStyle={{ fontWeight: 600 }}
+                    />
+                  </Grid>
+                </Grid>
+
+                {subscription?.mealPlan?._id === plan._id ? (
+                  <Box sx={{ mt: 3, textAlign: 'center' }}>
+                    <StatusChip
+                      status="Active"
+                      label="Current Plan"
+                      sx={{ fontSize: '0.9rem' }}
+                    />
+                  </Box>
                 ) : (
                   <Button
+                    fullWidth
                     variant="contained"
-                    color="primary"
-                    onClick={() =>
-                      navigate("/checkout", { state: { mealPlanId: plan._id } })
-                    }
-                    sx={{ mt: 2 }}
+                    size="large"
+                    onClick={() => navigate("/checkout", { state: { mealPlanId: plan._id } })}
+                    sx={{
+                      mt: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      fontSize: '1rem'
+                    }}
                   >
-                    Subscribe
+                    Choose Plan
                   </Button>
                 )}
-              </CardContent>
-            </Card>
+              </Box>
+            </CardWrapper>
           </Grid>
         ))}
       </Grid>

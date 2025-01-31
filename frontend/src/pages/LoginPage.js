@@ -10,8 +10,8 @@ import {
   Link,
   InputAdornment,
   IconButton,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
@@ -19,7 +19,7 @@ import loginImage from "../assets/chicken-tikka.webp"; // Replace with your logi
 
 const LoginPage = () => {
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

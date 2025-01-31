@@ -10,8 +10,8 @@ import {
   Link,
   InputAdornment,
   IconButton,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
 import registerImage from "../assets/chicken-tikka.webp"; // Replace with your register image

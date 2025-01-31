@@ -36,7 +36,7 @@ const CheckoutForm = ({ mealPlanId, totalPrice, deliveryType }) => {
         const token = localStorage.getItem("token");
 
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/payments/confirm-payment`,
+          `${import.meta.env.VITE_API_URL}/api/subscriptions/subscribe`,
           {
             paymentIntentId: paymentIntent.id,
             mealPlanId,

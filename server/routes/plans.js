@@ -1,6 +1,7 @@
 const express = require("express");
 const MealPlan = require("../models/MealPlan.model");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const { syncMealPlanWithStripe } = require("../utils/stripe");
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ router.get("/:id", async (req, res) => {
     res.json(mealPlan);
   } catch (error) {
     res.status(500).json({ message: "Error fetching meal plan." });
+    console.error(error);
   }
 });
 
@@ -31,6 +33,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { name, description, price, meals, deliveryDays } = req.body;
+
     const newMealPlan = new MealPlan({
       name,
       description,
@@ -38,13 +41,18 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
       meals,
       deliveryDays,
     });
+
+    // Sync with Stripe
+    newMealPlan.stripePriceId = await syncMealPlanWithStripe(newMealPlan);
+
     await newMealPlan.save();
     res.status(201).json(newMealPlan);
   } catch (error) {
+    console.error("Error adding meal plan:", error);
     res.status(500).json({ message: "Error adding meal plan." });
-    console.error(error);
   }
 });
+
 
 // Admin: Update a meal plan
 router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
@@ -55,12 +63,18 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
     }
 
     Object.assign(mealPlan, req.body);
+
+    // Sync updates with Stripe
+    mealPlan.stripePriceId = await syncMealPlanWithStripe(mealPlan);
+
     await mealPlan.save();
     res.json(mealPlan);
   } catch (error) {
+    console.error("Error updating meal plan:", error);
     res.status(500).json({ message: "Error updating meal plan." });
   }
 });
+
 
 // Admin: Delete a meal plan
 router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {

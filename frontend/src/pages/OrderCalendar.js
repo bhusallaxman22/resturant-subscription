@@ -7,17 +7,13 @@ import {
   Container,
   Typography,
   CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
   Box,
   Select,
   MenuItem,
   TextField,
 } from "@mui/material";
 import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
+import OrderDetailsDialog from "../components/OrderDetailsDialog";
 
 const OrderCalendar = () => {
   const [orders, setOrders] = useState([]);
@@ -80,7 +76,7 @@ const OrderCalendar = () => {
           ? order.user.name.toLowerCase().includes(filters.userName.toLowerCase())
           : true) &&
         (filters.mealPlan
-          ? order.subscription.mealPlan.name
+          ? order.subscription.mealPlan?.name
             .toLowerCase()
             .includes(filters.mealPlan.toLowerCase())
           : true) &&
@@ -120,7 +116,7 @@ const OrderCalendar = () => {
   }
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 6, px: 3, mt: 4 }}>
       <Typography variant="h4" gutterBottom>
         Order Delivery Calendar
       </Typography>
@@ -162,65 +158,21 @@ const OrderCalendar = () => {
       </Box>
 
       {/* Calendar */}
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        eventClick={handleEventClick}
-      />
-
+      <Box sx={{ height: 500 }}>
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          events={events}
+          eventClick={handleEventClick}
+        />
+      </Box>
       {/* Order Details Dialog */}
-      {selectedOrder && (
-        <Dialog
-          open={!!selectedOrder}
-          onClose={() => setSelectedOrder(null)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>Order Details</DialogTitle>
-          <DialogContent dividers>
-            <Typography variant="body1" gutterBottom>
-              <strong>User:</strong> {selectedOrder.user.name}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Email:</strong> {selectedOrder.user.email}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Plan:</strong> {selectedOrder.subscription.mealPlan.name}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Delivery Date:</strong>{" "}
-              {new Date(selectedOrder.deliveryDate).toDateString()}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Status:</strong> {selectedOrder.status}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Meals:</strong>{" "}
-              {selectedOrder.subscription.mealPlan.meals
-                .map((meal) => meal.name)
-                .join(", ")}
-            </Typography>
-            <Select
-              fullWidth
-              value={selectedOrder.status}
-              onChange={(e) => updateOrderStatus(selectedOrder._id, e.target.value)}
-              sx={{ mt: 2 }}
-            >
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="preparing">Preparing</MenuItem>
-              <MenuItem value="out-for-delivery">Out for Delivery</MenuItem>
-              <MenuItem value="completed">Completed</MenuItem>
-              <MenuItem value="cancelled">Cancelled</MenuItem>
-            </Select>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setSelectedOrder(null)} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
+      <OrderDetailsDialog
+        open={!!selectedOrder}
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        onUpdateStatus={updateOrderStatus}
+      />
     </Container>
   );
 };

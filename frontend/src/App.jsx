@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ThemeProvider, CssBaseline, Box, Typography } from "@mui/material";
+import { ThemeProvider, CssBaseline, Box, Typography, useMediaQuery } from "@mui/material";
 import theme from "./theme/theme";
 import GlobalStyles from "./theme/GlobalStyles";
 import AppRoutes from "./routes/AppRoutes";
@@ -10,6 +10,7 @@ import AdminDrawer from "./components/AdminDrawer";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <ThemeProvider theme={theme}>
@@ -23,6 +24,7 @@ function App() {
       <Box
         sx={{
           paddingTop: user ? "64px" : "0",
+          paddingLeft: user && user.role === "admin" && !isMobile ? "150px" : "0",
         }}
       >
         <ToastContainer />

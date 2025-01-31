@@ -26,6 +26,7 @@ const mealPlanSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
   price: { type: Number, required: true },
+  stripePriceId: { type: String }, // Stripe Price ID
   meals: [mealSchema], // Embedded array of meals
   deliveryDays: [
     {

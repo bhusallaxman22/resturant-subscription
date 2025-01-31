@@ -83,7 +83,7 @@ const AdminOrders = () => {
         !user || order.user.name.toLowerCase().includes(user.toLowerCase());
       const matchesMealPlan =
         !mealPlan ||
-        order.subscription.mealPlan.name
+        order.subscription.mealPlan?.name
           .toLowerCase()
           .includes(mealPlan.toLowerCase());
       return matchesUser && matchesMealPlan;
@@ -202,7 +202,7 @@ const AdminOrders = () => {
             {filteredOrders.map((order) => (
               <TableRow key={order._id}>
                 <TableCell>{order.user.name}</TableCell>
-                <TableCell>{order.subscription.mealPlan.name}</TableCell>
+                <TableCell>{order.subscription.mealPlan?.name}</TableCell>
                 <TableCell>
                   {new Date(order.deliveryDate).toDateString()}
                 </TableCell>
@@ -254,7 +254,7 @@ const AdminOrders = () => {
                 <strong>Email:</strong> {selectedOrder.user.email}
               </Typography>
               <Typography variant="body1" gutterBottom>
-                <strong>Plan:</strong> {selectedOrder.subscription.mealPlan.name}
+                <strong>Plan:</strong> {selectedOrder.subscription.mealPlan?.name}
               </Typography>
               <Typography variant="body1" gutterBottom>
                 <strong>Delivery Date:</strong>{" "}
@@ -265,7 +265,7 @@ const AdminOrders = () => {
               </Typography>
               <Typography variant="body1" gutterBottom>
                 <strong>Meals:</strong>{" "}
-                {selectedOrder.subscription.mealPlan.meals
+                {selectedOrder.subscription.mealPlan?.meals
                   .map((meal) => meal.name)
                   .join(", ")}
               </Typography>
