@@ -7,16 +7,13 @@ import { Bar } from "react-chartjs-2";
 import {
   Container,
   Typography,
-  Grid,
   Box,
   CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
+  useMediaQuery,
+  useTheme,
+  Stack,
 } from "@mui/material";
-import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
+import Grid from "@mui/material/Grid2";
 import {
   Chart as ChartJS,
   BarElement,
@@ -26,13 +23,13 @@ import {
   Legend,
 } from "chart.js";
 
-// Register Chart.js components
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -47,13 +44,12 @@ const AdminDashboard = () => {
       });
       setOrders(res.data);
     } catch (error) {
-      showErrorToast("Error fetching orders.");
+      console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Orders by Month Data
   const ordersPerMonth = orders.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
     acc[month] = (acc[month] || 0) + 1;
@@ -82,133 +78,187 @@ const AdminDashboard = () => {
     ],
   };
 
-  // Calendar Events
   const events = orders.map((order) => ({
     id: order._id,
     title: `${order.user.name} - ${order.subscription.mealPlan.name}`,
     start: new Date(order.deliveryDate).toISOString(),
     color: order.status === "cancelled" ? "lightgray" : "teal",
     textColor: order.status === "cancelled" ? "darkgray" : "white",
-    extendedProps: {
-      user: order.user,
-      mealPlan: order.subscription.mealPlan,
-      status: order.status,
-      meals: order.subscription.mealPlan.meals.map((meal) => meal.name).join(", "),
-    },
   }));
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Container sx={{ mt: 4, px: 2 }}>
+      <Typography variant="h4" gutterBottom textAlign="center">
         Admin Dashboard
       </Typography>
 
       {loading ? (
         <CircularProgress sx={{ display: "block", margin: "20px auto" }} />
       ) : (
-        <Grid container spacing={4}>
-          {/* Revenue and Orders */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                p: 3,
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor: "#f9f9f9",
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6">Total Revenue</Typography>
-              <Typography variant="h4" color="primary">
-                ${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                p: 3,
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor: "#f9f9f9",
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6">Total Orders</Typography>
-              <Typography variant="h4" color="primary">
-                {orders.length}
-              </Typography>
-            </Box>
-          </Grid>
-
-          {/* Orders and Revenue Chart */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                p: 3,
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              <Typography variant="h6">Orders & Revenue Per Month</Typography>
-              <Bar data={chartData} />
-            </Box>
-          </Grid>
-
-          {/* Order Calendar */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                p: 3,
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              <Typography variant="h6">Order Calendar</Typography>
-              <FullCalendar
-                plugins={[timeGridPlugin, interactionPlugin]}
-                initialView="timeGridWeek"
-                events={events}
-                headerToolbar={{
-                  left: "prev,next today",
-                  center: "title",
-                  right: "timeGridDay,timeGridWeek",
+        <>
+          {isMobile ? (
+            // Mobile Layout (Stacked)
+            <Stack spacing={3}>
+              {/* Total Revenue */}
+              <Box
+                sx={{
+                  p: 2,
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  backgroundColor: "#f9f9f9",
+                  textAlign: "center",
                 }}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-      )}
+              >
+                <Typography variant="h6">Total Revenue</Typography>
+                <Typography variant="h4" color="primary">
+                  ${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}
+                </Typography>
+              </Box>
 
-      {/* Dialog for Order Details */}
-      {selectedOrder && (
-        <Dialog open={!!selectedOrder} onClose={() => setSelectedOrder(null)} maxWidth="sm" fullWidth>
-          <DialogTitle>Order Details</DialogTitle>
-          <DialogContent>
-            <Typography variant="body1" gutterBottom>
-              <strong>User:</strong> {selectedOrder.user.name}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Email:</strong> {selectedOrder.user.email}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Plan:</strong> {selectedOrder.mealPlan.name}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Status:</strong> {selectedOrder.status}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              <strong>Meals:</strong> {selectedOrder.meals}
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setSelectedOrder(null)} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
+              {/* Total Orders */}
+              <Box
+                sx={{
+                  p: 2,
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  backgroundColor: "#f9f9f9",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="h6">Total Orders</Typography>
+                <Typography variant="h4" color="primary">
+                  {orders.length}
+                </Typography>
+              </Box>
+
+              {/* Orders & Revenue Chart */}
+              <Box
+                sx={{
+                  p: 2,
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  backgroundColor: "#f9f9f9",
+                }}
+              >
+                <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
+                  Orders & Revenue Per Month
+                </Typography>
+                <Box sx={{ width: "100%", minWidth: "300px" }}>
+                  <Bar data={chartData} />
+                </Box>
+              </Box>
+
+              {/* Order Calendar */}
+              <Box
+                sx={{
+                  p: 2,
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  backgroundColor: "#f9f9f9",
+                }}
+              >
+                <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
+                  Order Calendar
+                </Typography>
+                <FullCalendar
+                  plugins={[timeGridPlugin, interactionPlugin]}
+                  initialView="timeGridDay"
+                  events={events}
+                  headerToolbar={{
+                    left: "prev,next today",
+                    center: "title",
+                    right: "timeGridDay",
+                  }}
+                  height={350}
+                />
+              </Box>
+            </Stack>
+          ) : (
+            // Desktop Layout (Grid)
+            <Grid container spacing={3}>
+              {/* Total Revenue */}
+              <Grid item xs={12} sm={6} md={4}>
+                <Box
+                  sx={{
+                    p: 3,
+                    boxShadow: 3,
+                    borderRadius: 2,
+                    backgroundColor: "#f9f9f9",
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography variant="h6">Total Revenue</Typography>
+                  <Typography variant="h4" color="primary">
+                    ${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Total Orders */}
+              <Grid item xs={12} sm={6} md={4}>
+                <Box
+                  sx={{
+                    p: 3,
+                    boxShadow: 3,
+                    borderRadius: 2,
+                    backgroundColor: "#f9f9f9",
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography variant="h6">Total Orders</Typography>
+                  <Typography variant="h4" color="primary">
+                    {orders.length}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Orders & Revenue Chart */}
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    p: 3,
+                    boxShadow: 3,
+                    borderRadius: 2,
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
+                    Orders & Revenue Per Month
+                  </Typography>
+                  <Box sx={{ width: "100%" }}>
+                    <Bar data={chartData} />
+                  </Box>
+                </Box>
+              </Grid>
+
+              {/* Order Calendar */}
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    p: 3,
+                    boxShadow: 3,
+                    borderRadius: 2,
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
+                    Order Calendar
+                  </Typography>
+                  <FullCalendar
+                    plugins={[timeGridPlugin, interactionPlugin]}
+                    initialView="timeGridWeek"
+                    events={events}
+                    headerToolbar={{
+                      left: "prev,next today",
+                      center: "title",
+                      right: "timeGridWeek",
+                    }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          )}
+        </>
       )}
     </Container>
   );

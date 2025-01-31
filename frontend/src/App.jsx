@@ -23,7 +23,6 @@ function App() {
       <Box
         sx={{
           paddingTop: user ? "64px" : "0",
-          paddingLeft: user && user.role === "admin" ? "240px" : "0",
         }}
       >
         <ToastContainer />
