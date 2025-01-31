@@ -66,7 +66,7 @@ const AdminDashboard = () => {
 
   const revenuePerMonth = orders.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
-    acc[month] = (acc[month] || 0) + order.subscription.mealPlan?.price;
+    acc[month] = (acc[month] || 0) + order?.subscription?.mealPlan?.price;
     return acc;
   }, {});
 
