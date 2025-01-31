@@ -61,6 +61,12 @@ const Navbar = () => {
           >
             Home
           </Button>
+          <Button color="inherit" component={Link} to="/about-us">
+            About Us
+          </Button>
+          <Button color="inherit" component={Link} to="/contact-us">
+            Contact Us
+          </Button>
           {!user && (
             <>
               <Button color="inherit" component={Link} to="/login">

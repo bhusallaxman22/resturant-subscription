@@ -11,6 +11,8 @@ import AdminMealPlans from "../pages/AdminMealPlans";
 import CheckoutPage from "../pages/CheckoutPage";
 import UserOrders from "../pages/UserOrders";
 import AdminOrders from "../pages/AdminOrders";
+import AboutUs from "../pages/AboutUs";
+import ContactUs from "../pages/ContactUs";
 
 const AppRoutes = () => (
   <Routes>
@@ -18,6 +20,9 @@ const AppRoutes = () => (
     <Route path="/" element={<LandingPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
+    <Route path="/about-us" element={<AboutUs />} />
+    <Route path="/contact-us" element={<ContactUs />} />
+
 
     {/* Customer Pages (Protected) */}
     <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
