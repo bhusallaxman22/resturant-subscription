@@ -12,3 +12,4 @@ yarn-error.log*
 /frontend/npm-debug.log*
 /frontend/yarn-error.log*
 /frontend/.env
+frontend/dev-dist
