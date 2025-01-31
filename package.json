@@ -5,11 +5,10 @@
   "main": "/server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "install": "cd frontend && npm install && cd ../server && npm install",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd server && npm run dev",
     "build:frontend": "cd frontend && npm run build && cp -r dist ../server",
-    "start": "npm run build:frontend && cd server && npm start",
+    "start": "cd server && npm install && npm start",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier . --write",
     "test": "concurrently \"npm run test:frontend\" \"npm run test:backend\"",
