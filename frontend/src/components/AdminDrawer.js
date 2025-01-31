@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -11,6 +11,7 @@ import {
   IconButton,
   Box,
   Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -19,6 +20,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LayersIcon from "@mui/icons-material/Layers";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import theme from "../theme/theme";
 
 const drawerWidth = 240;
 const collapsedWidth = 60;
@@ -26,6 +28,12 @@ const collapsedWidth = 60;
 const AdminDrawer = ({ onLogout }) => {
   const [drawerOpen, setDrawerOpen] = useState(true);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+
+  useEffect(() => {
+    setDrawerOpen(!isMobile);
+  }, [isMobile]);
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -69,15 +77,13 @@ const AdminDrawer = ({ onLogout }) => {
       </AppBar>
 
       <Drawer
-        variant="permanent"
+        variant={isMobile ? "temporary" : "permanent"}
         open={drawerOpen}
         sx={{
           width: drawerOpen ? drawerWidth : collapsedWidth,
-          flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
             width: drawerOpen ? drawerWidth : collapsedWidth,
             transition: "width 0.3s",
-            overflowX: "hidden",
           },
         }}
       >
