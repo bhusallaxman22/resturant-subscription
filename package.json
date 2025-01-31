@@ -4,8 +4,8 @@
   "description": "Full-stack project with React frontend and Express backend",
   "scripts": {
     "start:frontend": "cd frontend && npm run dev",
-    "build:frontend": "cd frontend && npm run build && cp -r dist ../server",
-    "start:backend": "cd server && npm install && npm run start",
+    "build:frontend": "cd frontend && npm install && npm run build && cp -r dist ../server",
+    "start:backend": "npm run build:frontend && cd server && npm install && npm run start",
     "dev:backend": "cd server && npm run dev",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:frontend": "cd frontend && npm run lint",
