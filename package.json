@@ -1,21 +1,21 @@
 {
-  "name": "resturant-subscription",
+  "name": "restaurant-subscription",
   "version": "1.0.0",
   "description": "Full-stack project with React frontend and Express backend",
+  "main": "/server/index.js",
   "scripts": {
-    "start:frontend": "cd frontend && npm run dev",
-    "build:frontend": "cd frontend && npm install && npm run build && cp -r dist ../server",
-    "start:backend": "npm run build:frontend && cd server && npm install && npm run start",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd server && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build && cp -r dist ../server",
+    "build:backend": "cd server && npm run build",
+    "start": "cd server && npm start",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "lint:frontend": "cd frontend && npm run lint",
-    "lint:backend": "cd server && npm run lint",
     "format": "prettier . --write",
-    "format:frontend": "cd frontend && npm run format",
-    "format:backend": "cd server && npm run format",
-    "test": "npm run test:frontend && npm run test:backend",
-    "test:frontend": "cd frontend && npm run test",
-    "test:backend": "cd server && npm run test",
+    "test": "concurrently \"npm run test:frontend\" \"npm run test:backend\"",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd server && npm test",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
@@ -24,10 +24,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^8.2.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-react": "^7.32.2",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "vite": "^6.0.5"
   },
   "dependencies": {
     "dotenv": "^16.4.7"
