@@ -46,7 +46,7 @@ const OrderCalendar = () => {
     fetchOrders();
   }, []);
 
-  const events = filteredOrders.map((order) => ({
+  const events = filteredOrders?.map((order) => ({
     id: order._id,
     title: `${order.user.name} - ${order.subscription?.mealPlan?.name || "Meal Plan"}`,
     date: new Date(order.deliveryDate).toISOString().split("T")[0],

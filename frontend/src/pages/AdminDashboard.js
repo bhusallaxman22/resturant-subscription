@@ -58,19 +58,19 @@ const AdminDashboard = () => {
     }
   };
 
-  const ordersPerMonth = orders.reduce((acc, order) => {
+  const ordersPerMonth = orders?.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
     acc[month] = (acc[month] || 0) + 1;
     return acc;
   }, {});
 
-  const revenuePerMonth = orders.reduce((acc, order) => {
+  const revenuePerMonth = orders?.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
     acc[month] = (acc[month] || 0) + order?.subscription?.mealPlan?.price;
     return acc;
   }, {});
 
-  const events = orders.map((order) => ({
+  const events = orders?.map((order) => ({
     id: order._id,
     title: `${order.user.name} - ${order.subscription.mealPlan?.name}`,
     start: new Date(order.deliveryDate).toISOString(),
@@ -185,7 +185,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<MonetizationOn fontSize="large" />}
               title="Total Revenue"
-              value={`$${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}`}
+              value={`$${Object.values(revenuePerMonth)?.reduce((a, b) => a + b, 0).toFixed(2)}`}
               color={theme.palette.primary.main}
             />
           </Grid>
@@ -193,7 +193,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<ShoppingBasket fontSize="large" />}
               title="Total Orders"
-              value={orders.length}
+              value={orders?.length}
               color={theme.palette.secondary.main}
             />
           </Grid>

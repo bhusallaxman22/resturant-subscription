@@ -146,7 +146,7 @@ const AdminMealPlans = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mealPlans.map((mealPlan) => (
+            {mealPlans?.map((mealPlan) => (
               <TableRow key={mealPlan._id}>
                 <TableCell>{mealPlan.name}</TableCell>
                 <TableCell>{mealPlan.description}</TableCell>
@@ -255,7 +255,7 @@ const AdminMealPlans = () => {
           <Typography variant="h6" sx={{ marginTop: 2 }}>
             Meals
           </Typography>
-          {mealPlanData.meals.map((meal, index) => (
+          {mealPlanData.meals?.map((meal, index) => (
             <Accordion key={index}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography>{meal.name || `Meal ${index + 1}`}</Typography>
@@ -283,7 +283,7 @@ const AdminMealPlans = () => {
                   onChange={(e) =>
                     setMealPlanData({
                       ...mealPlanData,
-                      meals: mealPlanData.meals.map((m, i) =>
+                      meals: mealPlanData.meals?.map((m, i) =>
                         i === index ? { ...m, description: e.target.value } : m
                       ),
                     })
@@ -298,7 +298,7 @@ const AdminMealPlans = () => {
                   onChange={(e) =>
                     setMealPlanData({
                       ...mealPlanData,
-                      meals: mealPlanData.meals.map((m, i) =>
+                      meals: mealPlanData.meals?.map((m, i) =>
                         i === index
                           ? { ...m, price: parseFloat(e.target.value) }
                           : m
@@ -314,7 +314,7 @@ const AdminMealPlans = () => {
                   onChange={(e) =>
                     setMealPlanData({
                       ...mealPlanData,
-                      meals: mealPlanData.meals.map((m, i) =>
+                      meals: mealPlanData.meals?.map((m, i) =>
                         i === index
                           ? {
                             ...m,

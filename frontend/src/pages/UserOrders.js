@@ -194,7 +194,7 @@ const UserOrders = () => {
             </TableHead>
 
             <TableBody>
-              {orders.map((order) => (
+              {orders?.map((order) => (
                 <TableRow
                   key={order._id}
                   hover

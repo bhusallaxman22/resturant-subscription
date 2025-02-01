@@ -174,7 +174,7 @@ const SubscriptionPage = () => {
       </Typography>
 
       <Grid container spacing={4}>
-        {mealPlans.map((plan) => (
+        {mealPlans?.map((plan) => (
           <Grid item xs={12} md={4} key={plan._id}>
             <CardWrapper
               sx={{

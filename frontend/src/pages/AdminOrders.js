@@ -199,7 +199,7 @@ const AdminOrders = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredOrders.map((order) => (
+            {filteredOrders?.map((order) => (
               <TableRow key={order._id}>
                 <TableCell>{order.user.name}</TableCell>
                 <TableCell>{order.subscription.mealPlan?.name}</TableCell>
@@ -214,7 +214,7 @@ const AdminOrders = () => {
                     }
                     size="small"
                   >
-                    {statusOptions.map((status) => (
+                    {statusOptions?.map((status) => (
                       <MenuItem key={status} value={status}>
                         {status}
                       </MenuItem>
@@ -265,8 +265,7 @@ const AdminOrders = () => {
               </Typography>
               <Typography variant="body1" gutterBottom>
                 <strong>Meals:</strong>{" "}
-                {selectedOrder.subscription.mealPlan?.meals
-                  .map((meal) => meal.name)
+                {selectedOrder.subscription.mealPlan?.meals?.map((meal) => meal.name)
                   .join(", ")}
               </Typography>
             </Box>
