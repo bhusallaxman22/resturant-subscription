@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -19,7 +20,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LayersIcon from "@mui/icons-material/Layers";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useNavigate } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import { AuthContext } from "../contexts/AuthContext";
 import theme from "../theme/theme";
 
 const drawerWidth = 240;
@@ -30,45 +32,55 @@ const AdminDrawer = ({ onLogout }) => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-
+  // Adjust the drawer state when the viewport changes
   useEffect(() => {
     setDrawerOpen(!isMobile);
   }, [isMobile]);
 
   const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
+    setDrawerOpen((prev) => !prev);
   };
 
   const NAVIGATION = [
     { title: "Admin Dashboard", icon: <DashboardIcon />, path: "/admin" },
-    {
-      title: "Manage Meal Plans",
-      icon: <ShoppingCartIcon />,
-      path: "/admin/meal-plans",
-    },
+    { title: "Manage Meal Plans", icon: <ShoppingCartIcon />, path: "/admin/meal-plans" },
     { title: "Manage Orders", icon: <LayersIcon />, path: "/admin/orders" },
-    {
-      title: "Order Calendar",
-      icon: <CalendarTodayIcon />,
-      path: "/admin/calendar",
-    },
+    { title: "Order Calendar", icon: <CalendarTodayIcon />, path: "/admin/calendar" },
     { title: "Logout", icon: <LogoutIcon />, action: onLogout },
   ];
 
   return (
     <Box sx={{ display: "flex" }}>
+      {/* App Bar */}
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: "rgba(255, 255, 255, 0.8)!important",
+          backdropFilter: "blur(16px)",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)!important",
+          borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+          color: theme.palette.text.primary + "!important",
+        }}
       >
         <Toolbar>
           <IconButton
             color="inherit"
             edge="start"
             onClick={toggleDrawer}
-            sx={{ marginRight: 2 }}
+            sx={{
+              marginRight: 2,
+              color: theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: "rgba(124, 131, 253, 0.1)",
+              },
+            }}
           >
-            <MenuIcon />
+            <MenuIcon
+              sx={{
+                filter: "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1))",
+              }}
+            />
           </IconButton>
           <Typography variant="h6" noWrap>
             Sapphron Kitchen
@@ -76,9 +88,14 @@ const AdminDrawer = ({ onLogout }) => {
         </Toolbar>
       </AppBar>
 
+      {/* Drawer */}
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
         open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        ModalProps={{
+          keepMounted: true, // Better performance on mobile
+        }}
         sx={{
           width: drawerOpen ? drawerWidth : collapsedWidth,
           [`& .MuiDrawer-paper`]: {
@@ -103,6 +120,10 @@ const AdminDrawer = ({ onLogout }) => {
                     item.action();
                   } else {
                     navigate(item.path);
+                  }
+                  // Close the drawer on mobile after a navigation click
+                  if (isMobile) {
+                    setDrawerOpen(false);
                   }
                 }}
               >

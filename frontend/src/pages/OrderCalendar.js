@@ -158,7 +158,7 @@ const OrderCalendar = () => {
       </Box>
 
       {/* Calendar */}
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: "80vh" }}>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"

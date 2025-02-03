@@ -17,11 +17,12 @@ const StatusChip = ({ status, label }) => {
             label={label || status}
             size="small"
             sx={{
-                backgroundColor: color.bg,
-                color: color.color,
-                fontWeight: 600,
-                textTransform: 'capitalize',
-                borderRadius: 1
+                borderRadius: '12px',
+                padding: '4px 12px',
+                boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.4)',
+                background: 'rgba(255, 255, 255, 0.7)',
+                backdropFilter: 'blur(8px)',
             }}
         />
     );

@@ -13,6 +13,7 @@ import UserOrders from "../pages/UserOrders";
 import AdminOrders from "../pages/AdminOrders";
 import AboutUs from "../pages/AboutUs";
 import ContactUs from "../pages/ContactUs";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -37,7 +38,7 @@ const AppRoutes = () => (
     <Route path="/admin/orders" element={<PrivateRoute element={<AdminOrders />} adminOnly />} />
 
     {/* Fallback Route */}
-    <Route path="*" element={<h1>404 - Page Not Found</h1>} />
+    <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );
 

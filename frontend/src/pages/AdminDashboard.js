@@ -29,15 +29,22 @@ import {
 } from "@mui/icons-material";
 import OrderDetailsDialog from "../components/OrderDetailsDialog";
 import CardWrapper from "../components/CardWrapper";
+import { keyframes } from "@emotion/react";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
+// Fade-in and slide-up animation
+const fadeInUp = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
 
 const AdminDashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState(null); // For dialog
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -58,19 +65,19 @@ const AdminDashboard = () => {
     }
   };
 
-  const ordersPerMonth = orders?.reduce((acc, order) => {
+  const ordersPerMonth = orders.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
     acc[month] = (acc[month] || 0) + 1;
     return acc;
   }, {});
 
-  const revenuePerMonth = orders?.reduce((acc, order) => {
+  const revenuePerMonth = orders.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
-    acc[month] = (acc[month] || 0) + order?.subscription?.mealPlan?.price;
+    acc[month] = (acc[month] || 0) + (order.subscription?.mealPlan?.price || 0);
     return acc;
   }, {});
 
-  const events = orders?.map((order) => ({
+  const events = orders.map((order) => ({
     id: order._id,
     title: `${order.user.name} - ${order.subscription.mealPlan?.name}`,
     start: new Date(order.deliveryDate).toISOString(),
@@ -102,7 +109,7 @@ const AdminDashboard = () => {
   };
 
   const handleEventClick = (info) => {
-    setSelectedOrder(info.event.extendedProps); // Open the dialog with order details
+    setSelectedOrder(info.event.extendedProps);
   };
 
   const updateOrderStatus = async (orderId, status) => {
@@ -118,27 +125,57 @@ const AdminDashboard = () => {
           order._id === orderId ? { ...order, status } : order
         )
       );
-      setSelectedOrder(null); // Close the dialog
+      setSelectedOrder(null);
     } catch (error) {
       console.error("Error updating order status:", error);
     }
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 6, px: isMobile ? 2 : 4 }}>
-      <Box sx={{ mb: 6, textAlign: "center" }}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        py: 6,
+        px: isMobile ? 2 : 4,
+        background: "linear-gradient(145deg, #F5F6FF, #FFFFFF)",
+        minHeight: "100vh",
+        animation: `${fadeInUp} 0.8s ease-out`,
+      }}
+    >
+      {/* Dashboard Header */}
+      <Box
+        sx={{
+          mb: 6,
+          textAlign: "center",
+          p: 4,
+          borderRadius: "40px",
+          background: "rgba(255, 255, 255, 0.8)",
+          boxShadow:
+            "12px 12px 32px rgba(0, 0, 0, 0.06), -8px -8px 24px rgba(255, 255, 255, 0.8)",
+          border: "1px solid rgba(255, 255, 255, 0.5)",
+          backdropFilter: "blur(12px)",
+          animation: `${fadeInUp} 0.8s ease-out`,
+        }}
+      >
         <Typography
           variant="h3"
           sx={{
-            fontWeight: 700,
+            fontWeight: 800,
             display: "flex",
             alignItems: "center",
             gap: 2,
             justifyContent: "center",
             color: theme.palette.text.primary,
+            textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
           }}
         >
-          <TrendingUp fontSize="large" />
+          <TrendingUp
+            fontSize="large"
+            sx={{
+              color: theme.palette.primary.main,
+              filter: "drop-shadow(2px 2px 4px rgba(124, 131, 253, 0.2))",
+            }}
+          />
           Admin Dashboard
         </Typography>
       </Box>
@@ -152,10 +189,14 @@ const AdminDashboard = () => {
             height: "50vh",
           }}
         >
-          <CircularProgress size={80} thickness={4} />
+          <CircularProgress
+            size={80}
+            thickness={4}
+            sx={{ color: theme.palette.primary.main }}
+          />
         </Box>
       ) : (
-        <Grid container spacing={4}>
+        <Grid container spacing={4} sx={{ animation: `${fadeInUp} 0.8s ease-out` }}>
           {/* Order Calendar */}
           <Grid item xs={12}>
             <CardWrapper
@@ -163,7 +204,26 @@ const AdminDashboard = () => {
               title="Delivery Schedule"
               subtitle="Upcoming orders"
             >
-              <Box sx={{ height: 500 }}>
+              <Box
+                sx={{
+                  height: 500,
+                  borderRadius: "24px",
+                  overflow: "hidden",
+                  "& .fc": {
+                    border: "none",
+                    borderRadius: "24px",
+                    overflow: "hidden",
+                  },
+                  "& .fc-header-toolbar": {
+                    backgroundColor: "rgba(255,255,255,0.8)",
+                    backdropFilter: "blur(8px)",
+                    borderRadius: "24px 24px 0 0",
+                    padding: "16px",
+                    margin: 0,
+                    borderBottom: "1px solid rgba(0,0,0,0.05)",
+                  },
+                }}
+              >
                 <FullCalendar
                   plugins={[timeGridPlugin, interactionPlugin]}
                   initialView={isMobile ? "timeGridDay" : "timeGridWeek"}
@@ -185,7 +245,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<MonetizationOn fontSize="large" />}
               title="Total Revenue"
-              value={`$${Object.values(revenuePerMonth)?.reduce((a, b) => a + b, 0).toFixed(2)}`}
+              value={`$${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}`}
               color={theme.palette.primary.main}
             />
           </Grid>
@@ -193,7 +253,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<ShoppingBasket fontSize="large" />}
               title="Total Orders"
-              value={orders?.length}
+              value={orders.length}
               color={theme.palette.secondary.main}
             />
           </Grid>
@@ -205,12 +265,42 @@ const AdminDashboard = () => {
               title="Monthly Performance"
               subtitle="Orders vs Revenue"
             >
-              <Box sx={{ height: 400 }}>
+              <Box
+                sx={{
+                  height: 400,
+                  "& canvas": {
+                    borderRadius: "24px",
+                  },
+                }}
+              >
                 <Bar
                   data={chartData}
                   options={{
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                      duration: 1500,
+                      easing: "easeInOutQuart",
+                    },
+                    plugins: {
+                      legend: {
+                        position: "top",
+                        labels: {
+                          color: theme.palette.text.primary,
+                          font: { weight: 600 },
+                        },
+                      },
+                    },
+                    scales: {
+                      x: {
+                        grid: { color: "rgba(0,0,0,0.05)" },
+                        ticks: { color: theme.palette.text.primary },
+                      },
+                      y: {
+                        grid: { color: "rgba(0,0,0,0.05)" },
+                        ticks: { color: theme.palette.text.primary },
+                      },
+                    },
                   }}
                 />
               </Box>
@@ -230,52 +320,63 @@ const AdminDashboard = () => {
   );
 };
 
-
 const StatCard = ({ icon, title, value, color }) => {
   const theme = useTheme();
-
   return (
-    <Box sx={{
-      p: 4,
-      borderRadius: 4,
-      backgroundColor: theme.palette.background.paper,
-      boxShadow: theme.shadows[2],
-      height: '100%',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: theme.shadows[4]
-      }
-    }}>
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 3,
-        mb: 2
-      }}>
-        <Box sx={{
-          width: 56,
-          height: 56,
-          borderRadius: 2,
-          backgroundColor: `${color}20`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          {React.cloneElement(icon, { sx: { color } })}
+    <Box
+      sx={{
+        p: 3,
+        borderRadius: "24px",
+        background: "rgba(255, 255, 255, 0.8)",
+        boxShadow:
+          "8px 8px 24px rgba(0, 0, 0, 0.06), -4px -4px 16px rgba(255, 255, 255, 0.8)",
+        border: "1px solid rgba(255, 255, 255, 0.5)",
+        backdropFilter: "blur(8px)",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow:
+            "12px 12px 32px rgba(0, 0, 0, 0.1), -8px -8px 24px rgba(255, 255, 255, 0.9)",
+        },
+        animation: `${fadeInUp} 0.8s ease-out`,
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+        <Box
+          sx={{
+            width: 50,
+            height: 50,
+            borderRadius: "16px",
+            background: "rgba(255,255,255,0.8)",
+            boxShadow:
+              "4px 4px 12px rgba(0, 0, 0, 0.06), -2px -2px 8px rgba(255, 255, 255, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {React.cloneElement(icon, { sx: { color, fontSize: "2rem" } })}
         </Box>
-        <Typography variant="h6" sx={{
-          color: theme.palette.text.secondary,
-          fontWeight: 500
-        }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: theme.palette.text.secondary,
+            fontWeight: 600,
+            textShadow: "1px 1px 2px rgba(0,0,0,0.05)",
+          }}
+        >
           {title}
         </Typography>
       </Box>
-      <Typography variant="h3" sx={{
-        fontWeight: 700,
-        color: theme.palette.text.primary,
-        textAlign: 'right'
-      }}>
+      <Typography
+        variant="h4"
+        sx={{
+          textAlign: "right",
+          fontWeight: 800,
+          color: theme.palette.text.primary,
+          textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
         {value}
       </Typography>
     </Box>

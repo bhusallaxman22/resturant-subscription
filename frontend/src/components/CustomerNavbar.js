@@ -33,7 +33,16 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="fixed" color="primary">
+    <AppBar sx={{
+      borderRadius: '0 0 24px 24px',
+      background: 'rgba(255, 255, 255, 0.8)!important',
+      backdropFilter: 'blur(16px)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)!important',
+      border: '1px solid rgba(255, 255, 255, 0.5)',
+      borderTop: 'none',
+      color: '#2D3142!important',
+    }}
+      position="fixed" color="primary">
       <Toolbar>
         {/* Brand Logo */}
         <Typography

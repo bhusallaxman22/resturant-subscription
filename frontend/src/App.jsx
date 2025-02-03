@@ -1,12 +1,13 @@
 import { useContext } from "react";
-import { ThemeProvider, CssBaseline, Box, Typography, useMediaQuery } from "@mui/material";
-import theme from "./theme/theme";
+import { ThemeProvider, CssBaseline, Box, useMediaQuery } from "@mui/material";
 import GlobalStyles from "./theme/GlobalStyles";
 import AppRoutes from "./routes/AppRoutes";
 import { AuthContext } from "./contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
 import Navbar from "./components/CustomerNavbar";
 import AdminDrawer from "./components/AdminDrawer";
+import theme from "./theme/theme";
+import Footer from "./components/Footer";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -25,24 +26,13 @@ function App() {
         sx={{
           paddingTop: user ? "64px" : "0",
           paddingLeft: user && user.role === "admin" && !isMobile ? "150px" : "0",
+          minHeight: "calc(100vh - 200px)",
         }}
       >
         <ToastContainer />
         <AppRoutes />
       </Box>
-      <Box
-        sx={{
-          backgroundColor: "#000",
-          color: "#fff",
-          py: 2,
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
-        <Typography variant="body2">
-          © {new Date().getFullYear()} Saffron Kitchen | All Rights Reserved.
-        </Typography>
-      </Box>
+      <Footer />
     </ThemeProvider>
   );
 }

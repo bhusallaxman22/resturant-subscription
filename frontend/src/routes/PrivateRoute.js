@@ -3,7 +3,12 @@ import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 
 const PrivateRoute = ({ element, adminOnly = false }) => {
-  const { user } = useContext(AuthContext);
+  const { user, authLoading } = useContext(AuthContext);
+
+  if (authLoading) {
+    // Render a loader (or null) while authentication status is being determined.
+    return <div>Loading...</div>;
+  }
 
   if (!user) {
     return <Navigate to="/login" />;
