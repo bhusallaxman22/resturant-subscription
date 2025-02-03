@@ -8,6 +8,11 @@ import {
   Box,
   Chip,
   useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +24,6 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import SubscriptionIcon from "@mui/icons-material/CardMembership";
 import { keyframes } from "@emotion/react";
 
-// Define a gentle floating animation
 const float = keyframes`
   0% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
@@ -31,6 +35,9 @@ const SubscriptionPage = () => {
   const [mealPlans, setMealPlans] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+  const [openSwitchPlanDialog, setOpenSwitchPlanDialog] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,8 +59,6 @@ const SubscriptionPage = () => {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/plans`);
       setMealPlans(res.data);
     } catch (error) {
-      // Uncomment and adjust if you have a toast notification
-      // showErrorToast("Error fetching meal plans.");
       console.error("Error fetching meal plans:", error);
     }
   };
@@ -63,9 +68,7 @@ const SubscriptionPage = () => {
       const token = localStorage.getItem("token");
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/subscriptions`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.data) {
         setSubscription(res.data);
@@ -75,6 +78,7 @@ const SubscriptionPage = () => {
     }
   };
 
+  // This function will be called after the user confirms cancellation.
   const handleCancelSubscription = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -83,13 +87,21 @@ const SubscriptionPage = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Uncomment if you have a toast notification
-      // showSuccessToast("Subscription canceled.");
+      // Optionally, show a success toast here.
       fetchUserSubscription();
     } catch (error) {
-      // Uncomment if you have a toast notification
-      // showErrorToast("Error canceling subscription.");
       console.error("Error canceling subscription:", error);
+    }
+  };
+
+  // This function handles a plan selection. If a user is already subscribed,
+  // it will open a confirmation dialog.
+  const handlePlanSelection = (plan) => {
+    if (subscription) {
+      setSelectedPlan(plan);
+      setOpenSwitchPlanDialog(true);
+    } else {
+      navigate("/checkout", { state: { mealPlanId: plan._id } });
     }
   };
 
@@ -127,6 +139,7 @@ const SubscriptionPage = () => {
           top: 0,
           left: 0,
           zIndex: 0,
+          pointerEvents: "none", // Disable pointer events for floating elements
           "& > div": {
             position: "absolute",
             borderRadius: "30px",
@@ -156,7 +169,16 @@ const SubscriptionPage = () => {
         />
       </Box>
 
-      <Container maxWidth="lg" sx={{ py: 8, position: "relative", zIndex: 1 }}>
+      {/* Main Content Container */}
+      <Container
+        maxWidth="lg"
+        sx={{
+          py: 8,
+          position: "relative",
+          zIndex: 2,
+          pointerEvents: "auto", // Ensure interactions are allowed here
+        }}
+      >
         <Typography
           variant="h3"
           sx={{
@@ -208,13 +230,15 @@ const SubscriptionPage = () => {
                   <Button
                     variant="outlined"
                     color="error"
-                    onClick={handleCancelSubscription}
+                    onClick={() => setOpenCancelDialog(true)}
                     sx={{
                       px: 4,
                       "&:hover": {
                         backgroundColor: theme.palette.error.light,
                         color: theme.palette.error.contrastText,
                       },
+                      position: "relative",
+                      zIndex: 3,
                     }}
                   >
                     Cancel Subscription
@@ -314,11 +338,7 @@ const SubscriptionPage = () => {
                       fullWidth
                       variant="contained"
                       size="large"
-                      onClick={() =>
-                        navigate("/checkout", {
-                          state: { mealPlanId: plan._id },
-                        })
-                      }
+                      onClick={() => handlePlanSelection(plan)}
                       sx={{
                         mt: 3,
                         py: 1.5,
@@ -326,6 +346,8 @@ const SubscriptionPage = () => {
                         fontWeight: 600,
                         textTransform: "none",
                         fontSize: "1rem",
+                        position: "relative", // Ensure button is layered properly
+                        zIndex: 3, // Higher than floating elements
                       }}
                     >
                       Choose Plan
@@ -337,6 +359,67 @@ const SubscriptionPage = () => {
           ))}
         </Grid>
       </Container>
+
+      {/* Confirmation Dialog for Cancel Subscription */}
+      <Dialog
+        open={openCancelDialog}
+        onClose={() => setOpenCancelDialog(false)}
+      >
+        <DialogTitle>Confirm Cancellation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to cancel your subscription?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCancelDialog(false)}>No</Button>
+          <Button
+            onClick={async () => {
+              await handleCancelSubscription();
+              setOpenCancelDialog(false);
+            }}
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog for Switching Plans */}
+      <Dialog
+        open={openSwitchPlanDialog}
+        onClose={() => setOpenSwitchPlanDialog(false)}
+      >
+        <DialogTitle>Switch Plan Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Switching to a new plan will cancel your current subscription. Do
+            you want to continue?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setOpenSwitchPlanDialog(false);
+              setSelectedPlan(null);
+            }}
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => {
+              navigate("/checkout", {
+                state: { mealPlanId: selectedPlan?._id },
+              });
+              setOpenSwitchPlanDialog(false);
+              setSelectedPlan(null);
+            }}
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

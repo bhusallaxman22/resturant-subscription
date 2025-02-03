@@ -357,7 +357,7 @@ const Dashboard = () => {
           </Grid>
 
           {/* Order History Card */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} zIndex={3}>
             <CardWrapper icon={<HistoryIcon />} title="Order History">
               {orders.length > 0 ? (
                 <Box
@@ -365,7 +365,6 @@ const Dashboard = () => {
                     maxHeight: "560px",
                     overflowY: "auto",
                     pr: 1,
-                    // Remove pointerEvents style to ensure interactivity
                     "&::-webkit-scrollbar": { width: "6px" },
                     "&::-webkit-scrollbar-track": { bgcolor: "transparent" },
                     "&::-webkit-scrollbar-thumb": {
@@ -392,7 +391,7 @@ const Dashboard = () => {
                         sx={{
                           cursor: "pointer",
                           padding: "0 16px",
-                          pointerEvents: "all", // Ensure this element is clickable
+                          "&:hover": { backgroundColor: "transparent" },
                         }}
                       >
                         <Box
@@ -466,7 +465,7 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+    </Box >
   );
 };
 
