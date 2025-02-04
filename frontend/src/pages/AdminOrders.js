@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/AdminOrders.js
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -21,7 +22,7 @@ import {
   TextField,
   TableSortLabel,
 } from "@mui/material";
-import { showSuccessToast, showErrorToast } from "../components/ToastNotification";
+import { showSuccessToast, showErrorToast } from "../components/atoms/ToastNotifications";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);

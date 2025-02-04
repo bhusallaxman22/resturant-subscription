@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/SubscriptionPage.js
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -16,9 +17,9 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useNavigate } from "react-router-dom";
-import CardWrapper from "../components/CardWrapper";
-import DetailItem from "../components/DetailItem";
-import StatusChip from "../components/StatusChip";
+import CardWrapper from "../components/molecules/CardWrapper";
+import DetailItem from "../components/atoms/DetailItem";
+import StatusChip from "../components/atoms/StatusChip";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import SubscriptionIcon from "@mui/icons-material/CardMembership";

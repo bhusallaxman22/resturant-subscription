@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/AdminMealPlans.js
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -15,16 +16,12 @@ import {
   TextField,
   DialogActions,
   CircularProgress,
-  Box,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-  showSuccessToast,
-  showErrorToast,
-} from "../components/ToastNotification";
+import { showSuccessToast, showErrorToast } from "../components/atoms/ToastNotifications";
 
 const AdminMealPlans = () => {
   const [mealPlans, setMealPlans] = useState([]);

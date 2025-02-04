@@ -14,6 +14,8 @@ import AdminOrders from "../pages/AdminOrders";
 import AboutUs from "../pages/AboutUs";
 import ContactUs from "../pages/ContactUs";
 import NotFoundPage from "../pages/NotFoundPage";
+import OnboardingWizard from "../pages/OnboardingWizard";
+import ProfilePage from "../pages/ProfilePage";
 
 const AppRoutes = () => (
   <Routes>
@@ -30,6 +32,9 @@ const AppRoutes = () => (
     <Route path="/subscription" element={<PrivateRoute element={<SubscriptionPage />} />} />
     <Route path="/checkout" element={<PrivateRoute element={<CheckoutPage />} />} />
     <Route path="/orders" element={<PrivateRoute element={<UserOrders />} />} />
+    <Route path="/onboarding" element={<PrivateRoute element={<OnboardingWizard />} />} />
+    <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
+
 
     {/* Admin Pages (Admin-Only Protected) */}
     <Route path="/admin" element={<PrivateRoute element={<AdminDashboard />} adminOnly />} />

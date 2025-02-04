@@ -1,3 +1,4 @@
+// Path: frontend/src/components/CheckoutForm.js
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { Button, Box, CircularProgress, Typography } from "@mui/material";

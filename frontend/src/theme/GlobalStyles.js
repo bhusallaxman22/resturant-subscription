@@ -40,6 +40,33 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.MuiButton-root {
+  transition: all 0.3s ease!important;
+}
+
+img {
+  transition: transform 0.3s ease;
+}
+
+.MuiButton-root {
+  transition: all 0.3s ease!important;
+}
+
+img {
+  transition: transform 0.3s ease;
+}
+
  #root {
     width: 100%;
     max-width: 1200px; /* Ensures content doesn't overflow */

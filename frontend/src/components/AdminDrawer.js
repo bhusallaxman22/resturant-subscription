@@ -1,3 +1,4 @@
+// Path: frontend/src/components/AdminDrawer.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {

@@ -1,3 +1,4 @@
+// Path: frontend/src/components/DetailItem.js
 import { Box, Typography } from '@mui/material';
 
 const DetailItem = ({ label, value, stack }) => (

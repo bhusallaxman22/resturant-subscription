@@ -1,3 +1,4 @@
+// Path: frontend/src/api/stripeApi.js
 import axios from "axios";
 
 export const createSubscription = async (planType, deliveryType, meals) => {

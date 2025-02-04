@@ -1,3 +1,4 @@
+// Path: frontend/src/components/Navbar.js
 import { useContext, useState } from "react";
 import {
   AppBar,

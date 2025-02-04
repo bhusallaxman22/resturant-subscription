@@ -1,3 +1,4 @@
+// Path: frontend/src/components/OrderDetailsDialog.js
 import React from "react";
 import {
     Dialog,

@@ -1,3 +1,4 @@
+// Path: frontend/src/components/CardWrapper.js
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import styled from 'styled-components';

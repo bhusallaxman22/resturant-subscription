@@ -1,3 +1,4 @@
+// Path: frontend/src/components/Footer.js
 import React from "react";
 import { Box, Container, Typography, Link, Grid, IconButton } from "@mui/material";
 import { Facebook, Twitter, Instagram } from "@mui/icons-material";
@@ -85,6 +86,9 @@ const Footer = () => {
                 <Box sx={{ mt: 4, textAlign: "center" }}>
                     <Typography variant="caption" sx={{ color: "text.secondary" }}>
                         © {new Date().getFullYear()} Saffron Kitchen. All rights reserved.
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                        {" "} Website Created and Developed by @ <Link href="https://bhusallaxman.com.np" target="_blank" color="primary">Laxman Bhusal</Link>
                     </Typography>
                 </Box>
             </Container>

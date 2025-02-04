@@ -1,3 +1,4 @@
+// Path: frontend/src/components/StatusChip.js
 import { Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 

@@ -4,10 +4,10 @@ import GlobalStyles from "./theme/GlobalStyles";
 import AppRoutes from "./routes/AppRoutes";
 import { AuthContext } from "./contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
-import Navbar from "./components/CustomerNavbar";
-import AdminDrawer from "./components/AdminDrawer";
+import Navbar from "./components/organisms/NavBar";
+import AdminDrawer from "./components/organisms/AdminDrawer";
 import theme from "./theme/theme";
-import Footer from "./components/Footer";
+import Footer from "./components/organisms/Footer";
 
 function App() {
   const { user, logout } = useContext(AuthContext);

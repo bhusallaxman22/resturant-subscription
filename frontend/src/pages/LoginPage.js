@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/LoginPage.js
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import {
@@ -13,7 +14,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
+import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
 import loginImage from "../assets/chicken-tikka.webp";
 import { keyframes } from "@emotion/react";
 
@@ -39,7 +40,6 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(email, password);
-      showSuccessToast("Login successful!");
     } catch (err) {
       showErrorToast("Invalid credentials. Please try again.");
     } finally {

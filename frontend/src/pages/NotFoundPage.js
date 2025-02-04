@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/NotFoundPage.js
 import { Box, Button, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import { Link } from 'react-router-dom';

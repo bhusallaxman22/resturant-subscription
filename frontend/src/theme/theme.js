@@ -121,6 +121,25 @@ const theme = createTheme({
         },
       },
     },
+    MuiTypography: {
+      MuiTypography: {
+        styleOverrides: {
+          h1: {
+            fontSize: '4rem',
+            lineHeight: 1.2,
+            '@media (max-width: 600px)': {
+              fontSize: '2.5rem'
+            }
+          },
+          h3: {
+            fontSize: '2.5rem',
+            '@media (max-width: 600px)': {
+              fontSize: '2rem'
+            }
+          }
+        }
+      }
+    },
     MuiTable: {
       styleOverrides: {
         root: {

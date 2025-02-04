@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/OrderCalendar.js
 import { useEffect, useState } from "react";
 import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
@@ -12,8 +13,8 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
-import OrderDetailsDialog from "../components/OrderDetailsDialog";
+import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
+import OrderDetailsDialog from "../components/organisms/OrderDetailsDialog";
 
 const OrderCalendar = () => {
   const [orders, setOrders] = useState([]);

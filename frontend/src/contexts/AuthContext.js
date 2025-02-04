@@ -1,8 +1,9 @@
+// Path: frontend/src/contexts/AuthContext.js
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode as jwt_decode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
+import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
 
 export const AuthContext = createContext();
 
@@ -45,8 +46,9 @@ const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/register`, { name, email, password });
       localStorage.setItem("token", res.data.token);
-      setUser(jwt_decode(res.data.token));
-      navigate("/dashboard");
+      const decoded = jwt_decode(res.data.token);
+      setUser(decoded);
+      return res.data.user; // Return user data for further processing
     } catch (error) {
       showErrorToast(error.response?.data?.message || "Registration failed. Please try again.");
     }

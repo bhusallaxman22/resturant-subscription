@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/Dashboard.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -15,13 +16,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Grid from "@mui/material/Grid2";
-import { showErrorToast } from "../components/ToastNotification";
+import { showErrorToast } from "../components/atoms/ToastNotifications";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import HistoryIcon from "@mui/icons-material/History";
-import DetailItem from "../components/DetailItem";
-import StatusChip from "../components/StatusChip";
-import CardWrapper from "../components/CardWrapper";
+import DetailItem from "../components/atoms/DetailItem";
+import StatusChip from "../components/atoms/StatusChip";
+import CardWrapper from "../components/molecules/CardWrapper";
 import { keyframes } from "@emotion/react";
 
 const float = keyframes`
@@ -52,7 +53,7 @@ const Dashboard = () => {
         setSubscription(res.data);
       }
     } catch (error) {
-      showErrorToast("Error fetching subscription.");
+      showErrorToast("No active subscription found.");
       setSubscription(null);
     } finally {
       setLoading(false);

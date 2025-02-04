@@ -1,3 +1,4 @@
+// Path: frontend/src/pages/RegisterPage.js
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import {
@@ -11,10 +12,11 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { showErrorToast, showSuccessToast } from "../components/ToastNotification";
-import registerImage from "../assets/chicken-tikka.webp"; // Replace with your register image
+import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
+import registerImage from "../assets/chicken-tikka.webp";
 import { keyframes } from "@emotion/react";
 
 const float = keyframes`
@@ -25,6 +27,7 @@ const float = keyframes`
 
 const RegisterPage = () => {
   const { register } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -42,10 +45,17 @@ const RegisterPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await register(formData.name, formData.email, formData.password);
+      const user = await register(formData.name, formData.email, formData.password);
+      console.log("role", user.role);
       showSuccessToast("Registration successful!");
+      if (user?.role === "customer") {
+        navigate("/onboarding");
+      } else {
+        navigate("/admin");
+      }
     } catch (err) {
       showErrorToast("Error registering user. Please try again.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
