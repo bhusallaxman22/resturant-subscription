@@ -1,27 +1,28 @@
-// Path: frontend/src/pages/AdminDashboard.js
+// src/pages/AdminDashboard.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import {
   Container,
   Typography,
   Box,
   CircularProgress,
-  useMediaQuery,
-  useTheme,
+  Grid,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
-import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { useTheme } from "@mui/material/styles";
 import {
   MonetizationOn,
   ShoppingBasket,
@@ -29,21 +30,22 @@ import {
   TrendingUp,
 } from "@mui/icons-material";
 import StatCard from "../components/molecules/StatCard";
-import { keyframes } from "@emotion/react";
 import CardWrapper from "../components/molecules/CardWrapper";
 import OrderDetailsDialog from "../components/organisms/OrderDetailsDialog";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-// Fade-in and slide-up animation
-const fadeInUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
+// Register all necessary chart elements
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend
+);
 
 const AdminDashboard = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -67,6 +69,7 @@ const AdminDashboard = () => {
     }
   };
 
+  // Compute monthly stats for orders and revenue.
   const ordersPerMonth = orders.reduce((acc, order) => {
     const month = new Date(order.deliveryDate).toLocaleString("default", { month: "short" });
     acc[month] = (acc[month] || 0) + 1;
@@ -79,16 +82,8 @@ const AdminDashboard = () => {
     return acc;
   }, {});
 
-  const events = orders.map((order) => ({
-    id: order._id,
-    title: `${order.user.name} - ${order.subscription.mealPlan?.name}`,
-    start: new Date(order.deliveryDate).toISOString(),
-    color: order.status === "cancelled" ? "lightgray" : "teal",
-    textColor: order.status === "cancelled" ? "darkgray" : "white",
-    extendedProps: order,
-  }));
-
-  const chartData = {
+  // Prepare chart data for orders (Bar chart).
+  const ordersChartData = {
     labels: Object.keys(ordersPerMonth),
     datasets: [
       {
@@ -99,16 +94,34 @@ const AdminDashboard = () => {
         borderWidth: 1,
         borderRadius: 4,
       },
+    ],
+  };
+
+  // Prepare chart data for revenue (Line chart).
+  const revenueChartData = {
+    labels: Object.keys(revenuePerMonth),
+    datasets: [
       {
         label: "Revenue ($)",
         data: Object.values(revenuePerMonth),
         backgroundColor: theme.palette.secondary.light,
         borderColor: theme.palette.secondary.main,
-        borderWidth: 1,
-        borderRadius: 4,
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4, // Smooth curves
       },
     ],
   };
+
+  // Prepare calendar events.
+  const events = orders.map((order) => ({
+    id: order._id,
+    title: `${order.user.name} - ${order.subscription.mealPlan?.name}`,
+    start: new Date(order.deliveryDate).toISOString(),
+    color: order.status === "cancelled" ? "lightgray" : "teal",
+    textColor: order.status === "cancelled" ? "darkgray" : "white",
+    extendedProps: order,
+  }));
 
   const handleEventClick = (info) => {
     setSelectedOrder(info.event.extendedProps);
@@ -134,191 +147,132 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{
-        py: 6,
-        px: isMobile ? 2 : 4,
-        background: "linear-gradient(145deg, #F5F6FF, #FFFFFF)",
-        minHeight: "100vh",
-        animation: `${fadeInUp} 0.8s ease-out`,
-      }}
-    >
-      {/* Dashboard Header */}
-      <Box
-        sx={{
-          mb: 6,
-          textAlign: "center",
-          p: 4,
-          borderRadius: "40px",
-          background: "rgba(255, 255, 255, 0.8)",
-          boxShadow:
-            "12px 12px 32px rgba(0, 0, 0, 0.06), -8px -8px 24px rgba(255, 255, 255, 0.8)",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-          backdropFilter: "blur(12px)",
-          animation: `${fadeInUp} 0.8s ease-out`,
-        }}
-      >
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: 800,
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            justifyContent: "center",
-            color: theme.palette.text.primary,
-            textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
-          }}
-        >
-          <TrendingUp
-            fontSize="large"
-            sx={{
-              color: theme.palette.primary.main,
-              filter: "drop-shadow(2px 2px 4px rgba(124, 131, 253, 0.2))",
-            }}
-          />
+    <Box sx={{ backgroundColor: theme.palette.background.default, minHeight: "100vh" }}>
+      <Container maxWidth="xl" sx={{ py: 6, mt: 8 }}>
+        <Typography variant="h3" sx={{ fontWeight: 800, textAlign: "center", mb: 6 }}>
           Admin Dashboard
         </Typography>
-      </Box>
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
+            <CircularProgress size={80} thickness={4} sx={{ color: theme.palette.primary.main }} />
+          </Box>
+        ) : (
+          <Grid container spacing={4}>
+            {/* Stat Cards */}
+            <Grid item xs={12} sm={6} md={4}>
+              <StatCard
+                icon={<MonetizationOn fontSize="large" />}
+                title="Total Revenue"
+                value={`$${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}`}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <StatCard
+                icon={<ShoppingBasket fontSize="large" />}
+                title="Total Orders"
+                value={orders.length}
+                color={theme.palette.secondary.main}
+              />
+            </Grid>
 
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "50vh",
-          }}
-        >
-          <CircularProgress
-            size={80}
-            thickness={4}
-            sx={{ color: theme.palette.primary.main }}
-          />
-        </Box>
-      ) : (
-        <Grid container spacing={4} sx={{ animation: `${fadeInUp} 0.8s ease-out` }}>
-          {/* Order Calendar */}
-          <Grid item xs={12}>
-            <CardWrapper
-              icon={<CalendarToday />}
-              title="Delivery Schedule"
-              subtitle="Upcoming orders"
-            >
-              <Box
-                sx={{
-                  height: 500,
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  "& .fc": {
-                    border: "none",
-                    borderRadius: "24px",
-                    overflow: "hidden",
-                  },
-                  "& .fc-header-toolbar": {
-                    backgroundColor: "rgba(255,255,255,0.8)",
-                    backdropFilter: "blur(8px)",
-                    borderRadius: "24px 24px 0 0",
-                    padding: "16px",
-                    margin: 0,
-                    borderBottom: "1px solid rgba(0,0,0,0.05)",
-                  },
-                }}
-              >
-                <FullCalendar
-                  plugins={[timeGridPlugin, interactionPlugin]}
-                  initialView={isMobile ? "timeGridDay" : "timeGridWeek"}
-                  events={events}
-                  eventClick={handleEventClick}
-                  headerToolbar={{
-                    left: "prev,next",
-                    center: "title",
-                    right: "timeGridDay,timeGridWeek",
-                  }}
-                  height="100%"
-                />
-              </Box>
-            </CardWrapper>
-          </Grid>
-
-          {/* Summary Cards */}
-          <Grid item xs={12} sm={6} md={4}>
-            <StatCard
-              icon={<MonetizationOn fontSize="large" />}
-              title="Total Revenue"
-              value={`$${Object.values(revenuePerMonth).reduce((a, b) => a + b, 0).toFixed(2)}`}
-              color={theme.palette.primary.main}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <StatCard
-              icon={<ShoppingBasket fontSize="large" />}
-              title="Total Orders"
-              value={orders.length}
-              color={theme.palette.secondary.main}
-            />
-          </Grid>
-
-          {/* Orders & Revenue Chart */}
-          <Grid item xs={12} lg={8}>
-            <CardWrapper
-              icon={<TrendingUp />}
-              title="Monthly Performance"
-              subtitle="Orders vs Revenue"
-            >
-              <Box
-                sx={{
-                  height: 400,
-                  "& canvas": {
-                    borderRadius: "24px",
-                  },
-                }}
-              >
-                <Bar
-                  data={chartData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                      duration: 1500,
-                      easing: "easeInOutQuart",
-                    },
-                    plugins: {
-                      legend: {
-                        position: "top",
-                        labels: {
-                          color: theme.palette.text.primary,
-                          font: { weight: 600 },
+            {/* Orders Bar Chart */}
+            <Grid item xs={12} md={6}>
+              <CardWrapper icon={<TrendingUp />} title="Orders Overview" subtitle="Monthly orders">
+                <Box sx={{ height: 300 }}>
+                  <Bar
+                    data={ordersChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          display: true,
+                          position: "top",
+                          labels: { color: theme.palette.text.primary, font: { weight: 600 } },
                         },
                       },
+                      scales: {
+                        x: { grid: { color: "rgba(0,0,0,0.05)" }, ticks: { color: theme.palette.text.primary } },
+                        y: { grid: { color: "rgba(0,0,0,0.05)" }, ticks: { color: theme.palette.text.primary } },
+                      },
+                    }}
+                  />
+                </Box>
+              </CardWrapper>
+            </Grid>
+
+            {/* Revenue Line Chart */}
+            <Grid item xs={12} md={6}>
+              <CardWrapper icon={<TrendingUp />} title="Revenue Trends" subtitle="Monthly revenue">
+                <Box sx={{ height: 300 }}>
+                  <Line
+                    data={revenueChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          display: true,
+                          position: "top",
+                          labels: { color: theme.palette.text.primary, font: { weight: 600 } },
+                        },
+                      },
+                      scales: {
+                        x: { grid: { color: "rgba(0,0,0,0.05)" }, ticks: { color: theme.palette.text.primary } },
+                        y: { grid: { color: "rgba(0,0,0,0.05)" }, ticks: { color: theme.palette.text.primary } },
+                      },
+                    }}
+                  />
+                </Box>
+              </CardWrapper>
+            </Grid>
+
+            {/* Calendar */}
+            <Grid item xs={12}>
+              <CardWrapper icon={<CalendarToday />} title="Delivery Schedule">
+                <Box
+                  sx={{
+                    maxHeight: 600,
+                    overflowY: "auto",
+                    "& .fc": {
+                      border: "none",
+                      borderRadius: "24px",
+                      overflow: "hidden",
                     },
-                    scales: {
-                      x: {
-                        grid: { color: "rgba(0,0,0,0.05)" },
-                        ticks: { color: theme.palette.text.primary },
-                      },
-                      y: {
-                        grid: { color: "rgba(0,0,0,0.05)" },
-                        ticks: { color: theme.palette.text.primary },
-                      },
+                    "& .fc-header-toolbar": {
+                      backgroundColor: "rgba(255,255,255,0.9)",
+                      backdropFilter: "blur(8px)",
+                      borderRadius: "24px 24px 0 0",
+                      padding: "8px",
+                      borderBottom: "1px solid rgba(0,0,0,0.1)",
                     },
                   }}
-                />
-              </Box>
-            </CardWrapper>
+                >
+                  <FullCalendar
+                    plugins={[timeGridPlugin, interactionPlugin]}
+                    initialView="timeGridWeek"
+                    events={events}
+                    eventClick={handleEventClick}
+                    headerToolbar={{
+                      left: "prev,next",
+                      center: "title",
+                      right: "timeGridDay,timeGridWeek",
+                    }}
+                  />
+                </Box>
+              </CardWrapper>
+            </Grid>
           </Grid>
-        </Grid>
-      )}
-
-      {/* Order Details Dialog */}
-      <OrderDetailsDialog
-        open={!!selectedOrder}
-        order={selectedOrder}
-        onClose={() => setSelectedOrder(null)}
-        onUpdateStatus={updateOrderStatus}
-      />
-    </Container>
+        )}
+        <OrderDetailsDialog
+          open={!!selectedOrder}
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+          onUpdateStatus={updateOrderStatus}
+        />
+      </Container>
+    </Box>
   );
 };
 

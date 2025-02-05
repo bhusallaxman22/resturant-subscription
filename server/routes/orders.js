@@ -25,7 +25,7 @@ router.get("/", authMiddleware, async (req, res) => {
 router.get("/admin", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("user", "name email")
+      .populate("user", "name email address")
       .populate({
         path: "subscription",
         populate: { path: "mealPlan" },

@@ -9,7 +9,6 @@ import OrderCalendar from "../pages/OrderCalendar";
 import SubscriptionPage from "../pages/SubscriptionPage";
 import AdminMealPlans from "../pages/AdminMealPlans";
 import CheckoutPage from "../pages/CheckoutPage";
-import UserOrders from "../pages/UserOrders";
 import AdminOrders from "../pages/AdminOrders";
 import AboutUs from "../pages/AboutUs";
 import ContactUs from "../pages/ContactUs";
@@ -31,7 +30,6 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
     <Route path="/subscription" element={<PrivateRoute element={<SubscriptionPage />} />} />
     <Route path="/checkout" element={<PrivateRoute element={<CheckoutPage />} />} />
-    <Route path="/orders" element={<PrivateRoute element={<UserOrders />} />} />
     <Route path="/onboarding" element={<PrivateRoute element={<OnboardingWizard />} />} />
     <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
 

@@ -1,5 +1,5 @@
-// Path: frontend/src/pages/LoginPage.js
-import { useState, useContext } from "react";
+// src/pages/LoginPage.js
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import {
   Container,
@@ -14,24 +14,24 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
+import { showErrorToast } from "../components/atoms/ToastNotifications";
 import loginImage from "../assets/chicken-tikka.webp";
 import { keyframes } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 
 const float = keyframes`
-  0% { transform: translateY(0px); }
+  0% { transform: translateY(0); }
   50% { transform: translateY(-15px); }
-  100% { transform: translateY(0px); }
+  100% { transform: translateY(0); }
 `;
 
 const LoginPage = () => {
   const { login } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -40,6 +40,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(email, password);
+      navigate("/dashboard");
     } catch (err) {
       showErrorToast("Invalid credentials. Please try again.");
     } finally {
@@ -52,7 +53,7 @@ const LoginPage = () => {
       sx={{
         position: "relative",
         minHeight: "100vh",
-        background: "linear-gradient(145deg, #F5F6FF, #FFFFFF)",
+        background: "var(--bg-gradient)",
         overflow: "hidden",
         py: 4,
       }}
@@ -76,22 +77,10 @@ const LoginPage = () => {
         }}
       >
         <Box
-          sx={{
-            top: "10%",
-            left: "5%",
-            width: "80px",
-            height: "80px",
-            animation: `${float} 6s infinite`,
-          }}
+          sx={{ top: "10%", left: "5%", width: "80px", height: "80px", animation: `${float} 6s infinite` }}
         />
         <Box
-          sx={{
-            bottom: "15%",
-            right: "10%",
-            width: "120px",
-            height: "120px",
-            animation: `${float} 7s infinite`,
-          }}
+          sx={{ bottom: "15%", right: "10%", width: "120px", height: "120px", animation: `${float} 7s infinite` }}
         />
       </Box>
 
@@ -102,18 +91,18 @@ const LoginPage = () => {
           display: "flex",
           alignItems: "center",
           position: "relative",
-          zIndex: 1,
+          zIndex: 2,
           mt: 7,
         }}
       >
         <Grid container spacing={4}>
-          {/* Left Section: Form */}
+          {/* Form Section */}
           <Grid item xs={12} md={6}>
             <Box
               sx={{
                 p: 4,
                 boxShadow:
-                  "12px 12px 32px rgba(0, 0, 0, 0.06), -8px -8px 24px rgba(255,255,255,0.8)",
+                  "12px 12px 32px rgba(0,0,0,0.06), -8px -8px 24px rgba(255,255,255,0.8)",
                 borderRadius: "24px",
                 backgroundColor: "rgba(255,255,255,0.8)",
                 border: "1px solid rgba(255,255,255,0.5)",
@@ -177,7 +166,7 @@ const LoginPage = () => {
               </Typography>
             </Box>
           </Grid>
-          {/* Right Section: Image */}
+          {/* Image Section */}
           <Grid item xs={12} md={6}>
             <Box
               sx={{
@@ -193,7 +182,7 @@ const LoginPage = () => {
                   borderRadius: "24px",
                   padding: 2,
                   boxShadow:
-                    "12px 12px 32px rgba(0, 0, 0, 0.06), -8px -8px 24px rgba(255,255,255,0.8)",
+                    "12px 12px 32px rgba(0,0,0,0.06), -8px -8px 24px rgba(255,255,255,0.8)",
                   border: "1px solid rgba(255,255,255,0.5)",
                   backdropFilter: "blur(12px)",
                   animation: `${float} 4s ease-in-out infinite`,

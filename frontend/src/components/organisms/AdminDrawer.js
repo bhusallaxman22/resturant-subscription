@@ -1,22 +1,23 @@
+// src/components/organisms/AdminDrawer.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     AppBar,
     Toolbar,
+    IconButton,
     Typography,
     Drawer,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
-    IconButton,
     Box,
     Tooltip,
     useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LayersIcon from "@mui/icons-material/Layers";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -31,6 +32,7 @@ const AdminDrawer = ({ onLogout }) => {
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
+        // On mobile, start with the drawer closed; on desktop, open it.
         setDrawerOpen(!isMobile);
     }, [isMobile]);
 
@@ -38,9 +40,19 @@ const AdminDrawer = ({ onLogout }) => {
         setDrawerOpen((prev) => !prev);
     };
 
+    const handleLinkClick = (item) => {
+        if (item.action) {
+            item.action();
+        } else {
+            navigate(item.path);
+        }
+        // Collapse (minimize) the drawer after clicking a link.
+        setDrawerOpen(false);
+    };
+
     const NAVIGATION = [
         { title: "Admin Dashboard", icon: <DashboardIcon />, path: "/admin" },
-        { title: "Manage Meal Plans", icon: <ShoppingCartIcon />, path: "/admin/meal-plans" },
+        { title: "Manage Meal Plans", icon: <ShoppingBasketIcon />, path: "/admin/meal-plans" },
         { title: "Manage Orders", icon: <LayersIcon />, path: "/admin/orders" },
         { title: "Order Calendar", icon: <CalendarTodayIcon />, path: "/admin/calendar" },
         { title: "Logout", icon: <LogoutIcon />, action: onLogout },
@@ -48,39 +60,25 @@ const AdminDrawer = ({ onLogout }) => {
 
     return (
         <Box sx={{ display: "flex" }}>
-            {/* App Bar */}
+            {/* Glassmorphic AppBar */}
             <AppBar
                 position="fixed"
                 sx={{
-                    zIndex: (th) => th.zIndex.drawer + 1,
-                    backgroundColor: "rgba(255, 255, 255, 0.8)!important",
+                    width: { md: `calc(100% - ${drawerOpen ? drawerWidth : collapsedWidth}px)` },
+                    ml: { md: `${drawerOpen ? drawerWidth : collapsedWidth}px` },
+                    background: "rgba(255, 255, 255, 0.8)",
                     backdropFilter: "blur(16px)",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)!important",
-                    borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-                    color: theme.palette.text.primary + "!important",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+                    borderBottom: "1px solid rgba(0,0,0,0.05)",
+                    color: theme.palette.text.primary,
                 }}
             >
                 <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        edge="start"
-                        onClick={toggleDrawer}
-                        sx={{
-                            marginRight: 2,
-                            color: theme.palette.primary.main,
-                            "&:hover": {
-                                backgroundColor: "rgba(124, 131, 253, 0.1)",
-                            },
-                        }}
-                    >
-                        <MenuIcon
-                            sx={{
-                                filter: "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1))",
-                            }}
-                        />
+                    <IconButton color="inherit" onClick={toggleDrawer} edge="start" sx={{ mr: 2 }}>
+                        <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Sapphron Kitchen
+                        Admin Panel
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -89,14 +87,17 @@ const AdminDrawer = ({ onLogout }) => {
             <Drawer
                 variant={isMobile ? "temporary" : "permanent"}
                 open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-                ModalProps={{
-                    keepMounted: true,
-                }}
+                onClose={toggleDrawer}
+                ModalProps={{ keepMounted: true }}
                 sx={{
                     width: drawerOpen ? drawerWidth : collapsedWidth,
-                    [`& .MuiDrawer-paper`]: {
+                    flexShrink: 0,
+                    "& .MuiDrawer-paper": {
                         width: drawerOpen ? drawerWidth : collapsedWidth,
+                        boxSizing: "border-box",
+                        background: "rgba(255, 255, 255, 0.8)",
+                        backdropFilter: "blur(16px)",
+                        borderRight: "1px solid rgba(0,0,0,0.05)",
                         transition: "width 0.3s",
                     },
                 }}
@@ -104,24 +105,21 @@ const AdminDrawer = ({ onLogout }) => {
                 <Toolbar />
                 <List>
                     {NAVIGATION.map((item, index) => (
-                        <Tooltip
-                            title={drawerOpen ? "" : item.title}
-                            placement="right"
-                            key={index}
-                            arrow
-                        >
+                        <Tooltip key={index} title={drawerOpen ? "" : item.title} placement="right" arrow>
                             <ListItem
                                 button
-                                onClick={() => {
-                                    if (item.action) {
-                                        item.action();
-                                    } else {
-                                        navigate(item.path);
-                                    }
-                                    if (isMobile) setDrawerOpen(false);
-                                }}
+                                onClick={() => handleLinkClick(item)}
+                                sx={{ mb: 1 }}
                             >
-                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: drawerOpen ? 2 : "auto",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    {item.icon}
+                                </ListItemIcon>
                                 {drawerOpen && <ListItemText primary={item.title} />}
                             </ListItem>
                         </Tooltip>

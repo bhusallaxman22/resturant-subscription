@@ -1,5 +1,5 @@
-// Path: frontend/src/pages/ContactUs.js
-import { useState } from "react";
+// src/pages/ContactUs.js
+import React, { useState } from "react";
 import {
     Container,
     Typography,
@@ -12,11 +12,16 @@ import {
 import { keyframes } from "@emotion/react";
 import contactImage from "../assets/contact.png";
 
-// A subtle floating animation for background and content elements
+// Define keyframe animations for floating and scaling in
 const float = keyframes`
   0% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
   100% { transform: translateY(0px); }
+`;
+
+const scaleIn = keyframes`
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 `;
 
 const ContactUs = () => {
@@ -32,6 +37,7 @@ const ContactUs = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // In a real app you might send formData to an API here.
         setSubmitted(true);
     };
 
@@ -39,9 +45,9 @@ const ContactUs = () => {
         <Box
             sx={{
                 minHeight: "100vh",
-                background: "linear-gradient(145deg, #F5F6FF, #FFFFFF)",
+                background: "var(--bg-gradient)",
                 position: "relative",
-                padding: 4,
+                p: 4,
                 overflow: "hidden",
             }}
         >
@@ -59,7 +65,7 @@ const ContactUs = () => {
                         borderRadius: "30px",
                         background: "rgba(124, 131, 253, 0.1)",
                         backdropFilter: "blur(4px)",
-                        border: "1px solid rgba(255, 255, 255, 0.3)",
+                        border: "1px solid rgba(255,255,255,0.3)",
                     },
                 }}
             >
@@ -84,15 +90,15 @@ const ContactUs = () => {
             </Box>
 
             <Container sx={{ position: "relative", zIndex: 1, mt: 5, mb: 5 }}>
-                {/* Page Title & Introduction */}
-                <Box sx={{ textAlign: "center", mb: 4 }}>
+                {/* Heading and Intro */}
+                <Box sx={{ textAlign: "center", mb: 4, animation: `${scaleIn} 0.8s ease-out` }}>
                     <Typography
                         variant="h3"
                         sx={{
                             fontWeight: "bold",
                             mb: 2,
                             color: "#7C83FD",
-                            textShadow: "2px 2px 8px rgba(124, 131, 253, 0.2)",
+                            textShadow: "4px 4px 12px rgba(124,131,253,0.2)",
                         }}
                     >
                         Contact Us
@@ -102,25 +108,23 @@ const ContactUs = () => {
                         color="textSecondary"
                         sx={{ maxWidth: "800px", margin: "0 auto" }}
                     >
-                        Have a question, feedback, or just want to say hello? We’d love to
-                        hear from you! Fill out the form below, and we’ll get back to you as
-                        soon as possible.
+                        Have a question or feedback? Fill out the form below and we’ll get back to you soon.
                     </Typography>
                 </Box>
 
                 <Grid container spacing={4}>
-                    {/* Left Section: Contact Form */}
+                    {/* Contact Form */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
-                                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                backgroundColor: "var(--card-bg)",
                                 borderRadius: "24px",
-                                padding: 3,
+                                p: 4,
                                 boxShadow:
-                                    "12px 12px 32px rgba(0, 0, 0, 0.06), -8px -8px 24px rgba(255, 255, 255, 0.8)",
-                                border: "1px solid rgba(255, 255, 255, 0.5)",
+                                    "12px 12px 32px rgba(0,0,0,0.06), -8px -8px 24px rgba(255,255,255,0.8)",
+                                border: "1px solid var(--card-border)",
                                 backdropFilter: "blur(12px)",
-                                animation: `${float} 4s ease-in-out infinite`,
+                                animation: `${scaleIn} 0.8s ease-out`,
                             }}
                         >
                             <form onSubmit={handleSubmit}>
@@ -162,12 +166,7 @@ const ContactUs = () => {
                                         mt: 2,
                                         background: "linear-gradient(45deg, #ff6f61, #ffa726)",
                                         borderRadius: "24px",
-                                        padding: "12px 0",
-                                        boxShadow: "4px 4px 12px rgba(0,0,0,0.1)",
-                                        "&:hover": {
-                                            transform: "translateY(-2px)",
-                                            boxShadow: "6px 6px 16px rgba(0,0,0,0.15)",
-                                        },
+                                        py: 1.5,
                                     }}
                                 >
                                     Submit
@@ -181,16 +180,16 @@ const ContactUs = () => {
                         </Box>
                     </Grid>
 
-                    {/* Right Section: Contact Image */}
+                    {/* Contact Image */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
-                                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                                backgroundColor: "var(--card-bg)",
                                 borderRadius: "24px",
-                                padding: 2,
+                                p: 2,
                                 boxShadow:
-                                    "12px 12px 32px rgba(0, 0, 0, 0.06), -8px -8px 24px rgba(255, 255, 255, 0.8)",
-                                border: "1px solid rgba(255, 255, 255, 0.5)",
+                                    "12px 12px 32px rgba(0,0,0,0.06), -8px -8px 24px rgba(255,255,255,0.8)",
+                                border: "1px solid var(--card-border)",
                                 backdropFilter: "blur(12px)",
                                 display: "flex",
                                 justifyContent: "center",

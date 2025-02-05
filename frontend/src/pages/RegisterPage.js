@@ -1,5 +1,5 @@
-// Path: frontend/src/pages/RegisterPage.js
-import { useState, useContext } from "react";
+// src/pages/RegisterPage.js
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import {
   Container,
@@ -12,17 +12,17 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
+import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
+import { showErrorToast } from "../components/atoms/ToastNotifications";
 import registerImage from "../assets/chicken-tikka.webp";
 import { keyframes } from "@emotion/react";
 
 const float = keyframes`
-  0% { transform: translateY(0px); }
+  0% { transform: translateY(0); }
   50% { transform: translateY(-15px); }
-  100% { transform: translateY(0px); }
+  100% { transform: translateY(0); }
 `;
 
 const RegisterPage = () => {
@@ -46,8 +46,6 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       const user = await register(formData.name, formData.email, formData.password);
-      console.log("role", user.role);
-      showSuccessToast("Registration successful!");
       if (user?.role === "customer") {
         navigate("/onboarding");
       } else {
@@ -55,7 +53,6 @@ const RegisterPage = () => {
       }
     } catch (err) {
       showErrorToast("Error registering user. Please try again.");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -66,7 +63,7 @@ const RegisterPage = () => {
       sx={{
         position: "relative",
         minHeight: "100vh",
-        background: "linear-gradient(145deg, #F5F6FF, #FFFFFF)",
+        background: "var(--bg-gradient)",
         overflow: "hidden",
         py: 4,
       }}
@@ -89,24 +86,8 @@ const RegisterPage = () => {
           },
         }}
       >
-        <Box
-          sx={{
-            top: "10%",
-            left: "5%",
-            width: "80px",
-            height: "80px",
-            animation: `${float} 6s infinite`,
-          }}
-        />
-        <Box
-          sx={{
-            bottom: "15%",
-            right: "10%",
-            width: "120px",
-            height: "120px",
-            animation: `${float} 7s infinite`,
-          }}
-        />
+        <Box sx={{ top: "10%", left: "5%", width: "80px", height: "80px", animation: `${float} 6s infinite` }} />
+        <Box sx={{ bottom: "15%", right: "10%", width: "120px", height: "120px", animation: `${float} 7s infinite` }} />
       </Box>
 
       <Container
@@ -116,12 +97,12 @@ const RegisterPage = () => {
           display: "flex",
           alignItems: "center",
           position: "relative",
-          zIndex: 1,
+          zIndex: 2,
           mt: 7,
         }}
       >
         <Grid container spacing={4}>
-          {/* Left Section: Form */}
+          {/* Form Section */}
           <Grid item xs={12} md={6}>
             <Box
               sx={{
@@ -198,16 +179,9 @@ const RegisterPage = () => {
               </Typography>
             </Box>
           </Grid>
-          {/* Right Section: Image */}
+          {/* Image Section */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
               <Box
                 sx={{
                   backgroundColor: "rgba(255,255,255,0.8)",

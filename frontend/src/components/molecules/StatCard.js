@@ -1,11 +1,11 @@
+// src/components/molecules/StatCard.js
 import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { keyframes } from "@emotion/react";
 
-// Optional: you can define a keyframe animation if you want the same "fadeInUp" effect here.
 const fadeInUp = keyframes`
   from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 `;
 
 const StatCard = ({ icon, title, value, color }) => {
@@ -20,12 +20,6 @@ const StatCard = ({ icon, title, value, color }) => {
                     "8px 8px 24px rgba(0, 0, 0, 0.06), -4px -4px 16px rgba(255, 255, 255, 0.8)",
                 border: "1px solid rgba(255, 255, 255, 0.5)",
                 backdropFilter: "blur(8px)",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow:
-                        "12px 12px 32px rgba(0, 0, 0, 0.1), -8px -8px 24px rgba(255, 255, 255, 0.9)",
-                },
                 animation: `${fadeInUp} 0.8s ease-out`,
             }}
         >
@@ -43,17 +37,9 @@ const StatCard = ({ icon, title, value, color }) => {
                         justifyContent: "center",
                     }}
                 >
-                    {/* Clone the incoming icon and style it */}
                     {icon && React.cloneElement(icon, { sx: { color, fontSize: "2rem" } })}
                 </Box>
-                <Typography
-                    variant="subtitle1"
-                    sx={{
-                        color: theme.palette.text.secondary,
-                        fontWeight: 600,
-                        textShadow: "1px 1px 2px rgba(0,0,0,0.05)",
-                    }}
-                >
+                <Typography variant="subtitle1" sx={{ color: theme.palette.text.secondary, fontWeight: 600 }}>
                     {title}
                 </Typography>
             </Box>

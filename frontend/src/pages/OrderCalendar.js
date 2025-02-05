@@ -1,4 +1,4 @@
-// Path: frontend/src/pages/OrderCalendar.js
+// src/pages/OrderCalendar.js
 import { useEffect, useState } from "react";
 import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
@@ -13,6 +13,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
 import OrderDetailsDialog from "../components/organisms/OrderDetailsDialog";
 
@@ -45,8 +46,36 @@ const OrderCalendar = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [API_URL]);
 
+  // Compute unique options from orders.
+  const userNameOptions = Array.from(new Set(orders.map((order) => order.user.name)));
+  const mealPlanOptions = Array.from(
+    new Set(orders.map((order) => order.subscription?.mealPlan?.name).filter((name) => !!name))
+  );
+
+  // Update filters and perform filtering.
+  const handleFilterChange = (field, value) => {
+    const newFilters = { ...filters, [field]: value };
+    setFilters(newFilters);
+    const filtered = orders.filter((order) => {
+      const matchUser = newFilters.userName
+        ? order.user.name.toLowerCase().includes(newFilters.userName.toLowerCase())
+        : true;
+      const matchMeal = newFilters.mealPlan
+        ? order.subscription.mealPlan?.name
+          .toLowerCase()
+          .includes(newFilters.mealPlan.toLowerCase())
+        : true;
+      const matchStatus = newFilters.status
+        ? order.status === newFilters.status
+        : true;
+      return matchUser && matchMeal && matchStatus;
+    });
+    setFilteredOrders(filtered);
+  };
+
+  // Map filtered orders to FullCalendar events.
   const events = filteredOrders?.map((order) => ({
     id: order._id,
     title: `${order.user.name} - ${order.subscription?.mealPlan?.name || "Meal Plan"}`,
@@ -65,26 +94,7 @@ const OrderCalendar = () => {
   }));
 
   const handleEventClick = (info) => {
-    const order = info.event.extendedProps;
-    setSelectedOrder(order);
-  };
-
-  const handleFilterChange = (field, value) => {
-    setFilters({ ...filters, [field]: value });
-    const filtered = orders.filter((order) => {
-      return (
-        (filters.userName
-          ? order.user.name.toLowerCase().includes(filters.userName.toLowerCase())
-          : true) &&
-        (filters.mealPlan
-          ? order.subscription.mealPlan?.name
-            .toLowerCase()
-            .includes(filters.mealPlan.toLowerCase())
-          : true) &&
-        (filters.status ? order.status === filters.status : true)
-      );
-    });
-    setFilteredOrders(filtered);
+    setSelectedOrder(info.event.extendedProps);
   };
 
   const updateOrderStatus = async (orderId, status) => {
@@ -117,37 +127,39 @@ const OrderCalendar = () => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 6, px: 3, mt: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 6, px: 3, mt: 4, mb: 8 }}>
       <Typography variant="h4" gutterBottom>
         Order Delivery Calendar
       </Typography>
 
-      {/* Filters */}
-      <Box
-        sx={{
-          display: "flex",
-          gap: 2,
-          mb: 3,
-          flexWrap: "wrap",
-        }}
-      >
-        <TextField
-          label="Search by User Name"
+      {/* Filters Section with Autocomplete */}
+      <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
+        <Autocomplete
+          options={userNameOptions}
           value={filters.userName}
-          onChange={(e) => handleFilterChange("userName", e.target.value)}
-          fullWidth
+          onChange={(event, value) => handleFilterChange("userName", value || "")}
+          renderInput={(params) => (
+            <TextField {...params} label="Search by User Name" variant="outlined" fullWidth />
+          )}
+          sx={{ flex: 1 }}
+          freeSolo
         />
-        <TextField
-          label="Search by Meal Plan"
+        <Autocomplete
+          options={mealPlanOptions}
           value={filters.mealPlan}
-          onChange={(e) => handleFilterChange("mealPlan", e.target.value)}
-          fullWidth
+          onChange={(event, value) => handleFilterChange("mealPlan", value || "")}
+          renderInput={(params) => (
+            <TextField {...params} label="Search by Meal Plan" variant="outlined" fullWidth />
+          )}
+          sx={{ flex: 1 }}
+          freeSolo
         />
         <Select
           value={filters.status}
           onChange={(e) => handleFilterChange("status", e.target.value)}
           displayEmpty
           fullWidth
+          sx={{ flex: 1 }}
         >
           <MenuItem value="">All Statuses</MenuItem>
           <MenuItem value="pending">Pending</MenuItem>
@@ -158,15 +170,37 @@ const OrderCalendar = () => {
         </Select>
       </Box>
 
-      {/* Calendar */}
-      <Box sx={{ height: "80vh" }}>
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          events={events}
-          eventClick={handleEventClick}
-        />
+      {/* Calendar Container */}
+      <Box
+        sx={{
+          height: "80vh",
+          mb: 4,
+          borderRadius: "24px",
+          background: "rgba(255,255,255,0.8)",
+          boxShadow: "12px 12px 32px rgba(0,0,0,0.06)",
+          border: "1px solid rgba(255,255,255,0.5)",
+          backdropFilter: "blur(12px)",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Box sx={{ flex: "1 1 auto", overflowY: "auto" }}>
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={events}
+            eventClick={handleEventClick}
+            headerToolbar={{
+              left: "prev,next",
+              center: "title",
+              right: "dayGridMonth,dayGridWeek,dayGridDay",
+            }}
+            height="100%"
+          />
+        </Box>
       </Box>
+
       {/* Order Details Dialog */}
       <OrderDetailsDialog
         open={!!selectedOrder}

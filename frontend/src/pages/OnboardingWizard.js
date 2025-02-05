@@ -1,4 +1,4 @@
-// OnboardingWizard.js
+// src/pages/OnboardingWizard.js
 import React, { useState, useEffect } from "react";
 import {
     Box,
@@ -17,9 +17,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { showSuccessToast, showErrorToast } from "../components/atoms/ToastNotifications";
-
-// Import our reusable AddressAutocomplete
 import AddressAutocomplete from "../components/molecules/AddressAutocomplete";
+import { keyframes } from "@emotion/react";
+
+const fadeInUp = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
 
 const steps = ["Basic Info", "Address", "Confirm"];
 
@@ -29,7 +33,6 @@ const OnboardingWizard = () => {
     const [activeStep, setActiveStep] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [formData, setFormData] = useState({
         name: "",
         contactNumber: "",
@@ -42,23 +45,18 @@ const OnboardingWizard = () => {
         },
     });
 
-    // Fetch existing user data
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
                 const token = localStorage.getItem("token");
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL}/api/auth/profile`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
+                    { headers: { Authorization: `Bearer ${token}` } }
                 );
-
                 // Convert DOB to YYYY-MM-DD if available
                 const dobValue = response.data.dob
                     ? new Date(response.data.dob).toISOString().slice(0, 10)
                     : "";
-
                 setFormData({
                     name: response.data.name || "",
                     contactNumber: response.data.contactNumber || "",
@@ -77,24 +75,20 @@ const OnboardingWizard = () => {
                 setLoading(false);
             }
         };
-
         fetchUserProfile();
     }, []);
 
-    const handleNext = () => {
-        setActiveStep((prev) => prev + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prev) => prev - 1);
-    };
+    const handleNext = () => setActiveStep((prev) => prev + 1);
+    const handleBack = () => setActiveStep((prev) => prev - 1);
 
     const handleSubmit = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/auth/me`, formData, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await axios.put(
+                `${import.meta.env.VITE_API_URL}/api/auth/me`,
+                formData,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             showSuccessToast("User information updated successfully!");
             navigate("/dashboard");
         } catch (error) {
@@ -103,25 +97,16 @@ const OnboardingWizard = () => {
         }
     };
 
-    /**
-     * AddressAutocomplete "onChange" - user is typing, so we just track it in `street`.
-     */
+    // Called when user is typing in the address field.
     const handleAddressChange = (val) => {
         setFormData((prev) => ({
             ...prev,
-            address: {
-                ...prev.address,
-                street: val, // typed text for display
-            },
+            address: { ...prev.address, street: val },
         }));
     };
 
-    /**
-     * AddressAutocomplete "onSelect" - user selected an address.
-     * We'll parse out city/state/zip from the result, plus the `street`.
-     */
+    // Called when user selects an address suggestion.
     const handleAddressSelect = (result) => {
-        // `result` = { fullAddress, street, city, state, zip, coords }
         setFormData((prev) => ({
             ...prev,
             address: {
@@ -144,7 +129,9 @@ const OnboardingWizard = () => {
                             fullWidth
                             sx={{ mb: 2 }}
                             value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            onChange={(e) =>
+                                setFormData({ ...formData, name: e.target.value })
+                            }
                         />
                         <TextField
                             label="Contact Number"
@@ -170,7 +157,6 @@ const OnboardingWizard = () => {
             case 1:
                 return (
                     <Box sx={{ mt: 3 }}>
-                        {/* Our AddressAutocomplete */}
                         <AddressAutocomplete
                             addressValue={formData.address.street}
                             onChange={handleAddressChange}
@@ -186,10 +172,7 @@ const OnboardingWizard = () => {
                                     onChange={(e) =>
                                         setFormData((prev) => ({
                                             ...prev,
-                                            address: {
-                                                ...prev.address,
-                                                city: e.target.value,
-                                            },
+                                            address: { ...prev.address, city: e.target.value },
                                         }))
                                     }
                                 />
@@ -202,10 +185,7 @@ const OnboardingWizard = () => {
                                     onChange={(e) =>
                                         setFormData((prev) => ({
                                             ...prev,
-                                            address: {
-                                                ...prev.address,
-                                                state: e.target.value,
-                                            },
+                                            address: { ...prev.address, state: e.target.value },
                                         }))
                                     }
                                 />
@@ -218,10 +198,7 @@ const OnboardingWizard = () => {
                                     onChange={(e) =>
                                         setFormData((prev) => ({
                                             ...prev,
-                                            address: {
-                                                ...prev.address,
-                                                zip: e.target.value,
-                                            },
+                                            address: { ...prev.address, zip: e.target.value },
                                         }))
                                     }
                                 />
@@ -251,14 +228,7 @@ const OnboardingWizard = () => {
 
     if (loading) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                 <CircularProgress size={80} />
             </Box>
         );
@@ -281,6 +251,7 @@ const OnboardingWizard = () => {
                 p: 4,
                 borderRadius: "16px",
                 boxShadow: theme.shadows[5],
+                animation: `${fadeInUp} 0.8s ease-out`,
             }}
         >
             <Typography variant="h4" align="center" gutterBottom>

@@ -1,10 +1,11 @@
-import { useContext } from "react";
+// src/App.js
+import React, { useContext } from "react";
 import { ThemeProvider, CssBaseline, Box, useMediaQuery } from "@mui/material";
 import GlobalStyles from "./theme/GlobalStyles";
 import AppRoutes from "./routes/AppRoutes";
 import { AuthContext } from "./contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
-import Navbar from "./components/organisms/NavBar";
+import Navbar from "./components/organisms/Navbar";
 import AdminDrawer from "./components/organisms/AdminDrawer";
 import theme from "./theme/theme";
 import Footer from "./components/organisms/Footer";
@@ -24,15 +25,15 @@ function App() {
       )}
       <Box
         sx={{
-          paddingTop: user ? "64px" : "0",
-          paddingLeft: user && user.role === "admin" && !isMobile ? "150px" : "0",
+          paddingTop: user ? "72px" : "0",
+          paddingLeft: user && user.role === "admin" && !isMobile ? "250px" : "0",
           minHeight: "calc(100vh - 200px)",
         }}
       >
         <ToastContainer />
         <AppRoutes />
+        <Footer />
       </Box>
-      <Footer />
     </ThemeProvider>
   );
 }

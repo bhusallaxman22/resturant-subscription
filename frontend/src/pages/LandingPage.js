@@ -1,14 +1,21 @@
-// Path: frontend/src/pages/LandingPage.js
-import { Typography, Button, Box, Container, Card, CardMedia, CardContent } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+// src/pages/LandingPage.js
+import React from "react";
+import {
+  Typography,
+  Button,
+  Box,
+  Container,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { keyframes } from "@emotion/react";
-import sapphronImage from "../assets/sapphron.png";
-import testimonialImage from "../assets/testimonial.jpg";
-import menuImage1 from "../assets/menu1.png";
 import HeroCarousel from "../components/organisms/HeroCarousel";
+import menuImage1 from "../assets/menu1.png";
+import testimonialImage from "../assets/testimonial.jpg";
 
-// Define animations
 const float = keyframes`
   0% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
@@ -22,22 +29,11 @@ const scaleIn = keyframes`
 
 const LandingPage = () => {
   return (
-    <Box
-      sx={{
-        position: "relative",
-        minHeight: "100vh",
-        pb: 5,
-        mt: 12,
-        overflow: "hidden",
-      }}
-    >
-      {/* Hero Carousel (Full Width/Height) */}
+    <Box sx={{ position: "relative", minHeight: "100vh", overflow: "hidden" }}>
+      {/* Hero Carousel in the background */}
       <HeroCarousel />
 
-      {/* 
-        An overlay to darken the carousel (optional).
-        Makes white text easier to read.
-      */}
+      {/* Dark overlay to improve text contrast */}
       <Box
         sx={{
           position: "absolute",
@@ -46,58 +42,20 @@ const LandingPage = () => {
           width: "100%",
           height: "100vh",
           backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 0,
+          zIndex: 1,
         }}
       />
 
-      {/* Floating Decorative Elements */}
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          top: 0,
-          left: 0,
-          zIndex: 1,
-          "& > div": {
-            position: "absolute",
-            borderRadius: "30px",
-            background: "rgba(124, 131, 253, 0.1)",
-            backdropFilter: "blur(4px)",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            top: "10%",
-            left: "5%",
-            width: "80px",
-            height: "80px",
-            animation: `${float} 6s infinite`,
-          }}
-        />
-        <Box
-          sx={{
-            bottom: "15%",
-            right: "10%",
-            width: "120px",
-            height: "120px",
-            animation: `${float} 7s infinite`,
-          }}
-        />
-      </Box>
-
-      {/* Hero Section Text Overlay */}
+      {/* Hero text and CTA */}
       <Box
         sx={{
           position: "relative",
-          zIndex: 2,
+          zIndex: 3,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          height: { xs: "calc(100vh - 96px)", md: "100vh" }, // subtract navbar height if needed
+          height: "100vh",
           textAlign: "center",
           px: 3,
         }}
@@ -112,7 +70,7 @@ const LandingPage = () => {
             animation: `${scaleIn} 0.8s ease-out`,
           }}
         >
-          Savor the Flavors of Nepal & India
+          Savor Authentic Flavors
         </Typography>
         <Typography
           variant="h5"
@@ -124,7 +82,7 @@ const LandingPage = () => {
             animationFillMode: "backwards",
           }}
         >
-          Enjoy carefully crafted meals made from traditional recipes delivered right to your door.
+          Enjoy traditional Nepali &amp; Indian cuisine crafted with passion and delivered to your door.
         </Typography>
         <Button
           component={Link}
@@ -143,6 +101,7 @@ const LandingPage = () => {
             },
             animation: `${scaleIn} 0.8s ease-out 0.4s`,
             animationFillMode: "backwards",
+            zIndex: 4, // ensures button is clickable
           }}
         >
           Get Started
@@ -150,7 +109,15 @@ const LandingPage = () => {
       </Box>
 
       {/* About Section */}
-      <Box sx={{ py: 10, backgroundColor: "rgba(255,255,255,0.8)", backdropFilter: "blur(12px)" }}>
+      <Box
+        sx={{
+          py: 10,
+          backgroundColor: "rgba(255,255,255,0.8)",
+          backdropFilter: "blur(12px)",
+          zIndex: 2,
+          position: "relative",
+        }}
+      >
         <Container>
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
@@ -164,11 +131,7 @@ const LandingPage = () => {
                 <img
                   src={menuImage1}
                   alt="About Us"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: "32px",
-                  }}
+                  style={{ width: "100%", height: "auto", borderRadius: "32px" }}
                 />
               </Box>
             </Grid>
@@ -177,94 +140,48 @@ const LandingPage = () => {
                 About Saffron Kitchen
               </Typography>
               <Typography variant="body1" sx={{ mb: 3, fontSize: "1.1rem" }}>
-                At Saffron Kitchen, we bring the authentic flavors of Nepal and India to your table.
-                Our chefs use traditional recipes passed down through generations, combined with
-                fresh, high-quality ingredients to create unforgettable dining experiences.
+                At Saffron Kitchen, we deliver authentic flavors of Nepali and Indian cuisines,
+                crafted with passion and served with care.
               </Typography>
-              <Link to="/about-us" style={{ textDecoration: "none" }}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    background: "linear-gradient(45deg, #7C83FD, #96BAFF)",
-                    borderRadius: "24px",
-                    padding: "12px 32px",
-                    fontSize: "1rem",
-                    boxShadow: "4px 4px 12px rgba(0,0,0,0.1)",
-                    "&:hover": {
-                      transform: "translateY(-2px)",
-                      boxShadow: "6px 6px 16px rgba(0,0,0,0.15)",
-                    },
-                  }}
-                >
-                  Learn More
-                </Button>
-              </Link>
+              <Button
+                component={Link}
+                to="/about-us"
+                variant="contained"
+                size="large"
+                sx={{
+                  background: "linear-gradient(45deg, #7C83FD, #96BAFF)",
+                  borderRadius: "24px",
+                  padding: "12px 32px",
+                  fontSize: "1rem",
+                  boxShadow: "4px 4px 12px rgba(0,0,0,0.1)",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: "6px 6px 16px rgba(0,0,0,0.15)",
+                  },
+                }}
+              >
+                Learn More
+              </Button>
             </Grid>
           </Grid>
         </Container>
       </Box>
 
-      {/* How It Works Section */}
-      <Box sx={{ py: 10 }}>
-        <Container>
-          <Typography variant="h3" sx={{ fontWeight: "bold", textAlign: "center", mb: 6 }}>
-            How It Works
-          </Typography>
-          <Grid container spacing={4}>
-            {[
-              {
-                icon: "🍴",
-                title: "Choose Your Plan",
-                description: "Select from our variety of meal plans tailored to your preferences.",
-              },
-              {
-                icon: "🚚",
-                title: "Get It Delivered",
-                description: "Fresh meals delivered to your door at your preferred time.",
-              },
-              {
-                icon: "😋",
-                title: "Enjoy Your Meal",
-                description: "Savor delicious, authentic flavors in the comfort of your home.",
-              },
-            ].map((step, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Card
-                  sx={{
-                    p: 4,
-                    height: "100%",
-                    borderRadius: "32px",
-                    background: "rgba(255,255,255,0.8)",
-                    boxShadow: "12px 12px 32px rgba(0, 0, 0, 0.06)",
-                    border: "1px solid rgba(255,255,255,0.5)",
-                    backdropFilter: "blur(12px)",
-                    transition: "transform 0.3s ease",
-                    "&:hover": {
-                      transform: "translateY(-8px)",
-                    },
-                  }}
-                >
-                  <Typography variant="h2" sx={{ mb: 2 }}>
-                    {step.icon}
-                  </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                    {step.title}
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: "text.secondary" }}>
-                    {step.description}
-                  </Typography>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
       {/* Testimonials Section */}
-      <Box sx={{ py: 10, backgroundColor: "rgba(255,255,255,0.8)", backdropFilter: "blur(12px)" }}>
+      <Box
+        sx={{
+          py: 10,
+          backgroundColor: "rgba(255,255,255,0.8)",
+          backdropFilter: "blur(12px)",
+          zIndex: 2,
+          position: "relative",
+        }}
+      >
         <Container>
-          <Typography variant="h3" sx={{ fontWeight: "bold", textAlign: "center", mb: 6 }}>
+          <Typography
+            variant="h3"
+            sx={{ fontWeight: "bold", textAlign: "center", mb: 6 }}
+          >
             What Our Customers Say
           </Typography>
           <Grid container spacing={4}>
@@ -273,26 +190,25 @@ const LandingPage = () => {
                 image: testimonialImage,
                 name: "John Doe",
                 review:
-                  "The food is absolutely delicious! The delivery is always on time. Highly recommend Saffron Kitchen.",
+                  "The food is absolutely delicious! The service is top-notch, and the flavors transport you straight to Nepal and India.",
               },
               {
                 image: testimonialImage,
                 name: "Jane Smith",
                 review:
-                  "Authentic flavors that remind me of home. The meal plans are convenient and affordable.",
+                  "Authentic, flavorful, and delivered on time. Saffron Kitchen is my go-to for comfort food with a twist.",
               },
               {
                 image: testimonialImage,
                 name: "Michael Johnson",
                 review:
-                  "Excellent service and quality. The variety of dishes keeps me coming back for more!",
+                  "I was blown away by the quality and taste of the meals. Every dish is a masterpiece!",
               },
             ].map((testimonial, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <Card
                   sx={{
                     p: 3,
-                    height: "100%",
                     borderRadius: "32px",
                     background: "rgba(255,255,255,0.8)",
                     boxShadow: "12px 12px 32px rgba(0, 0, 0, 0.06)",
@@ -312,12 +228,14 @@ const LandingPage = () => {
                     image={testimonial.image}
                     alt={testimonial.name}
                   />
-                  <Typography variant="body1" sx={{ mb: 2 }}>
-                    "{testimonial.review}"
-                  </Typography>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    - {testimonial.name}
-                  </Typography>
+                  <CardContent>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      "{testimonial.review}"
+                    </Typography>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      - {testimonial.name}
+                    </Typography>
+                  </CardContent>
                 </Card>
               </Grid>
             ))}
@@ -326,44 +244,46 @@ const LandingPage = () => {
       </Box>
 
       {/* Call to Action Section */}
-      <Box sx={{ py: 10 }}>
-        <Container
+      <Box
+        sx={{
+          py: 10,
+          backgroundColor: "rgba(255,255,255,0.8)",
+          borderRadius: "32px",
+          p: 6,
+          textAlign: "center",
+          boxShadow: "12px 12px 32px rgba(0, 0, 0, 0.06)",
+          border: "1px solid rgba(255,255,255,0.5)",
+          backdropFilter: "blur(12px)",
+          position: "relative",
+          zIndex: 2,
+          mb: 4,
+        }}
+      >
+        <Typography variant="h3" sx={{ fontWeight: "bold", mb: 3 }}>
+          Ready to Experience Authentic Flavors?
+        </Typography>
+        <Typography variant="h5" sx={{ mb: 4, color: "text.secondary" }}>
+          Join our community of happy customers today!
+        </Typography>
+        <Button
+          component={Link}
+          to="/subscription"
+          variant="contained"
+          size="large"
           sx={{
-            backgroundColor: "rgba(255,255,255,0.8)",
-            borderRadius: "32px",
-            p: 6,
-            textAlign: "center",
-            boxShadow: "12px 12px 32px rgba(0, 0, 0, 0.06)",
-            border: "1px solid rgba(255,255,255,0.5)",
-            backdropFilter: "blur(12px)",
+            background: "linear-gradient(45deg, #7C83FD, #96BAFF)",
+            borderRadius: "24px",
+            padding: "16px 40px",
+            fontSize: "1.1rem",
+            boxShadow: "4px 4px 12px rgba(0,0,0,0.1)",
+            "&:hover": {
+              transform: "translateY(-2px)",
+              boxShadow: "6px 6px 16px rgba(0,0,0,0.15)",
+            },
           }}
         >
-          <Typography variant="h3" sx={{ fontWeight: "bold", mb: 3 }}>
-            Ready to Experience Authentic Flavors?
-          </Typography>
-          <Typography variant="h5" sx={{ mb: 4, color: "text.secondary" }}>
-            Join our community of happy customers today!
-          </Typography>
-          <Button
-            component={Link}
-            to="/subscription"
-            variant="contained"
-            size="large"
-            sx={{
-              background: "linear-gradient(45deg, #7C83FD, #96BAFF)",
-              borderRadius: "24px",
-              padding: "16px 40px",
-              fontSize: "1.1rem",
-              boxShadow: "4px 4px 12px rgba(0,0,0,0.1)",
-              "&:hover": {
-                transform: "translateY(-2px)",
-                boxShadow: "6px 6px 16px rgba(0,0,0,0.15)",
-              },
-            }}
-          >
-            Get Started
-          </Button>
-        </Container>
+          Get Started
+        </Button>
       </Box>
     </Box>
   );
