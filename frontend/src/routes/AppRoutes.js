@@ -15,15 +15,19 @@ import ContactUs from "../pages/ContactUs";
 import NotFoundPage from "../pages/NotFoundPage";
 import OnboardingWizard from "../pages/OnboardingWizard";
 import ProfilePage from "../pages/ProfilePage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 
 const AppRoutes = () => (
   <Routes>
     {/* Public Pages */}
     <Route path="/" element={<LandingPage />} />
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/about-us" element={<AboutUs />} />
     <Route path="/contact-us" element={<ContactUs />} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
 
 
     {/* Customer Pages (Protected) */}

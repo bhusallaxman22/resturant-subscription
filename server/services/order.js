@@ -1,6 +1,5 @@
-const Order = require("../models/Order");
-const Subscription = require("../models/Subscription");
-const Meal = require("../models/Meal");
+const Order = require("../models/Order.model");
+const Subscription = require("../models/Subscription.model");
 
 const scheduleOrders = async () => {
   try {

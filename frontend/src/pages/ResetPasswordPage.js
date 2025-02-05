@@ -1,6 +1,5 @@
-// src/pages/LoginPage.js
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+// src/pages/ResetPasswordPage.js
+import React, { useState, useEffect } from "react";
 import {
   Container,
   TextField,
@@ -8,16 +7,19 @@ import {
   Typography,
   Box,
   CircularProgress,
-  Link,
   InputAdornment,
   IconButton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { showErrorToast } from "../components/atoms/ToastNotifications";
-import loginImage from "../assets/chicken-tikka.webp";
 import { keyframes } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../components/atoms/ToastNotifications";
+import resetImage from "../assets/chicken-tikka.webp";
+import axios from "axios";
 
 const float = keyframes`
   0% { transform: translateY(0); }
@@ -25,24 +27,64 @@ const float = keyframes`
   100% { transform: translateY(0); }
 `;
 
-const LoginPage = () => {
-  const { login } = useContext(AuthContext);
+const ResetPasswordPage = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+
+  // Extract the token from ?token= in the URL
+  const token = searchParams.get("token");
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  // 1) If there's no token, redirect or show an error
+  useEffect(() => {
+    if (!token) {
+      showErrorToast("No token provided. Please check your email link.");
+      // Option A: Immediately redirect
+      navigate("/forgot-password");
+      // Option B: Alternatively, you could just show a message/return
+    }
+  }, [token, navigate]);
+
+  const toggleNewPasswordVisibility = () =>
+    setShowNewPassword(!showNewPassword);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword(!showConfirmPassword);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    // 2) Basic client checks
+    if (!newPassword || !confirmPassword) {
+      showErrorToast("Please fill out both fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showErrorToast("Passwords do not match.");
+      return;
+    }
+
     try {
-      await login(email, password);
-      navigate("/dashboard");
+      setLoading(true);
+      // 3) Call your backend's reset-password route
+      await axios.post(`${API_URL}/api/auth/reset-password`, {
+        token,
+        newPassword,
+      });
+
+      showSuccessToast("Password reset successful. Please log in.");
+      navigate("/login");
     } catch (err) {
-      showErrorToast("Invalid credentials. Please try again.");
+      showErrorToast(
+        err.response?.data?.message ||
+          "Could not reset password. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -77,10 +119,22 @@ const LoginPage = () => {
         }}
       >
         <Box
-          sx={{ top: "10%", left: "5%", width: "80px", height: "80px", animation: `${float} 6s infinite` }}
+          sx={{
+            top: "10%",
+            left: "5%",
+            width: "80px",
+            height: "80px",
+            animation: `${float} 6s infinite`,
+          }}
         />
         <Box
-          sx={{ bottom: "15%", right: "10%", width: "120px", height: "120px", animation: `${float} 7s infinite` }}
+          sx={{
+            bottom: "15%",
+            right: "10%",
+            width: "120px",
+            height: "120px",
+            animation: `${float} 7s infinite`,
+          }}
         />
       </Box>
 
@@ -111,41 +165,47 @@ const LoginPage = () => {
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
-                Welcome Back!
+                Reset Your Password
               </Typography>
               <form onSubmit={handleSubmit}>
                 <TextField
-                  label="Email"
-                  type="email"
+                  label="New Password"
+                  type={showNewPassword ? "text" : "password"}
                   fullWidth
                   margin="normal"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <TextField
-                  label="Password"
-                  type={showPassword ? "text" : "password"}
-                  fullWidth
-                  margin="normal"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   required
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={togglePasswordVisibility}>
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        <IconButton onClick={toggleNewPasswordVisibility}>
+                          {showNewPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     ),
                   }}
                 />
-                <Typography variant="body2" sx={{ textAlign: "right", mt: 1 }}>
-                  <Link href="/forgot-password" underline="hover" color="secondary">
-                    Forgot Password?
-                  </Link>
-                </Typography>
+                <TextField
+                  label="Confirm New Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  fullWidth
+                  margin="normal"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={toggleConfirmPasswordVisibility}
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
                 <Button
                   type="submit"
                   variant="contained"
@@ -160,17 +220,12 @@ const LoginPage = () => {
                   }}
                   disabled={loading}
                 >
-                  {loading ? <CircularProgress size={24} /> : "Login"}
+                  {loading ? <CircularProgress size={24} /> : "Reset Password"}
                 </Button>
               </form>
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                Don't have an account?{" "}
-                <Link href="/register" underline="hover" color="secondary">
-                  Sign up
-                </Link>
-              </Typography>
             </Box>
           </Grid>
+
           {/* Image Section */}
           <Grid item xs={12} md={6}>
             <Box
@@ -194,8 +249,8 @@ const LoginPage = () => {
                 }}
               >
                 <img
-                  src={loginImage}
-                  alt="Login Illustration"
+                  src={resetImage}
+                  alt="Reset Password Illustration"
                   style={{
                     width: "100%",
                     height: "80vh",
@@ -212,4 +267,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ResetPasswordPage;

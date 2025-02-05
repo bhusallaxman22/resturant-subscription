@@ -1,6 +1,6 @@
-const { sendEmail } = require("./emailService");
-const User = require("../models/User");
-const Order = require("../models/Order");
+const { sendEmail } = require("./email");
+const User = require("../models/User.model");
+const Order = require("../models/Order.model");
 
 const sendOrderNotifications = async () => {
   try {

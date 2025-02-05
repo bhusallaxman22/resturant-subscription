@@ -15,8 +15,15 @@ const userSchema = new mongoose.Schema(
     dob: { type: Date },
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
     isActive: { type: Boolean, default: true },
+
+    // forgot password
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
   },
+
   { timestamps: true }
 );
+
+
 
 module.exports = mongoose.model("User", userSchema);

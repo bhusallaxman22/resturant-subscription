@@ -1,8 +1,8 @@
 const express = require("express");
 const Order = require("../models/Order.model");
 const Subscription = require("../models/Subscription.model");
-const MealPlan = require("../models/MealPlan.model");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const { sendEmail } = require("../services/email");
 
 const router = express.Router();
 
@@ -60,6 +60,14 @@ router.post("/", authMiddleware, async (req, res) => {
     });
 
     await order.save();
+
+    await sendEmail(
+      req.user.email,
+      "Your Order Confirmation",
+      "Order placed successfully",
+      emailTemplates.orderConfirmation(order)
+    );
+    
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: "Error creating order." });

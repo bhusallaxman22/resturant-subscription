@@ -1,6 +1,4 @@
-// src/pages/LoginPage.js
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import React, { useState } from "react";
 import {
   Container,
   TextField,
@@ -8,16 +6,12 @@ import {
   Typography,
   Box,
   CircularProgress,
-  Link,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { showErrorToast } from "../components/atoms/ToastNotifications";
-import loginImage from "../assets/chicken-tikka.webp";
 import { keyframes } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../components/atoms/ToastNotifications";
+import forgotImage from "../assets/chicken-tikka.webp"; // Or another image
+import axios from "axios";
 
 const float = keyframes`
   0% { transform: translateY(0); }
@@ -25,24 +19,29 @@ const float = keyframes`
   100% { transform: translateY(0); }
 `;
 
-const LoginPage = () => {
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const API_URL = import.meta.env.VITE_API_URL;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!email) {
+      showErrorToast("Please enter your email.");
+      return;
+    }
     try {
-      await login(email, password);
-      navigate("/dashboard");
+      setLoading(true);
+      // Call your backend route that sends a password reset link
+      await axios.post(`${API_URL}/api/auth/forgot-password`, { email });
+      showSuccessToast("Check your email for a reset link.");
+      setEmail(""); // clear the field
     } catch (err) {
-      showErrorToast("Invalid credentials. Please try again.");
+      showErrorToast(
+        err.response?.data?.message || "Could not send reset link. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -77,10 +76,22 @@ const LoginPage = () => {
         }}
       >
         <Box
-          sx={{ top: "10%", left: "5%", width: "80px", height: "80px", animation: `${float} 6s infinite` }}
+          sx={{
+            top: "10%",
+            left: "5%",
+            width: "80px",
+            height: "80px",
+            animation: `${float} 6s infinite`,
+          }}
         />
         <Box
-          sx={{ bottom: "15%", right: "10%", width: "120px", height: "120px", animation: `${float} 7s infinite` }}
+          sx={{
+            bottom: "15%",
+            right: "10%",
+            width: "120px",
+            height: "120px",
+            animation: `${float} 7s infinite`,
+          }}
         />
       </Box>
 
@@ -111,7 +122,10 @@ const LoginPage = () => {
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
-                Welcome Back!
+                Forgot Password
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                Enter your email to receive a password reset link.
               </Typography>
               <form onSubmit={handleSubmit}>
                 <TextField
@@ -123,33 +137,9 @@ const LoginPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <TextField
-                  label="Password"
-                  type={showPassword ? "text" : "password"}
-                  fullWidth
-                  margin="normal"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={togglePasswordVisibility}>
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <Typography variant="body2" sx={{ textAlign: "right", mt: 1 }}>
-                  <Link href="/forgot-password" underline="hover" color="secondary">
-                    Forgot Password?
-                  </Link>
-                </Typography>
                 <Button
                   type="submit"
                   variant="contained"
-                  color="primary"
                   fullWidth
                   sx={{
                     mt: 3,
@@ -160,15 +150,9 @@ const LoginPage = () => {
                   }}
                   disabled={loading}
                 >
-                  {loading ? <CircularProgress size={24} /> : "Login"}
+                  {loading ? <CircularProgress size={24} /> : "Send Reset Link"}
                 </Button>
               </form>
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                Don't have an account?{" "}
-                <Link href="/register" underline="hover" color="secondary">
-                  Sign up
-                </Link>
-              </Typography>
             </Box>
           </Grid>
           {/* Image Section */}
@@ -194,8 +178,8 @@ const LoginPage = () => {
                 }}
               >
                 <img
-                  src={loginImage}
-                  alt="Login Illustration"
+                  src={forgotImage}
+                  alt="Forgot Password Illustration"
                   style={{
                     width: "100%",
                     height: "80vh",
@@ -212,4 +196,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;

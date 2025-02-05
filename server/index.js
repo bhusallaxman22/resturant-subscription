@@ -5,6 +5,9 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
+const scheduler = require("./cron/scheduler");
+
+
 // Import Routes
 const authRoutes = require("./routes/auth");
 const subscriptionRoutes = require("./routes/subscriptions");
