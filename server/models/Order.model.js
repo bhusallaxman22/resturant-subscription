@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     subscription: { type: mongoose.Schema.Types.ObjectId, ref: "Subscription" },
-    meals: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meal" }],
+    mealPlan: { type: mongoose.Schema.Types.ObjectId, ref: "MealPlan" },
     orderDate: { type: Date, default: Date.now },
     deliveryDate: { type: Date, required: true },
     status: {
