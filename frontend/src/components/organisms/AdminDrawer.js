@@ -22,6 +22,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LayersIcon from "@mui/icons-material/Layers";
 import LogoutIcon from "@mui/icons-material/Logout";
 import theme from "../../theme/theme";
+import { Email } from "@mui/icons-material";
 
 const drawerWidth = 240;
 const collapsedWidth = 60;
@@ -54,6 +55,8 @@ const AdminDrawer = ({ onLogout }) => {
         { title: "Admin Dashboard", icon: <DashboardIcon />, path: "/admin" },
         { title: "Manage Meal Plans", icon: <ShoppingBasketIcon />, path: "/admin/meal-plans" },
         { title: "Manage Orders", icon: <LayersIcon />, path: "/admin/orders" },
+        { title: "Catering Requests", icon: <ShoppingBasketIcon />, path: "/admin/catering-requests" },
+        { title: "Newsletter", icon: <Email />, path: "/admin/newsletter" },
         { title: "Order Calendar", icon: <CalendarTodayIcon />, path: "/admin/calendar" },
         { title: "Logout", icon: <LogoutIcon />, action: onLogout },
     ];

@@ -13,6 +13,8 @@ const authRoutes = require("./routes/auth");
 const subscriptionRoutes = require("./routes/subscriptions");
 const orderRoutes = require("./routes/orders");
 const planRoutes = require("./routes/plans");
+const cateringRoutes = require("./routes/catering");
+const newsletterRoutes = require("./routes/newsletter");
 const adminRoutes = require("./routes/admin");
 const paymentRoutes = require("./routes/stripe");
 const stripeWebhook = require("./webhooks/stripe");
@@ -46,6 +48,8 @@ app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/catering", cateringRoutes);
+app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/payments", paymentRoutes); // Stripe Payment Routes
 app.use("/api/stripe", stripeWebhook); // Stripe Webhooks
 

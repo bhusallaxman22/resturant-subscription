@@ -17,6 +17,8 @@ import OnboardingWizard from "../pages/OnboardingWizard";
 import ProfilePage from "../pages/ProfilePage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import AdminCateringRequests from "../pages/AdminCateringRequests";
+import AdminNewsletter from "../pages/AdminNewsletter";
 
 const AppRoutes = () => (
   <Routes>
@@ -43,6 +45,8 @@ const AppRoutes = () => (
     <Route path="/admin/calendar" element={<PrivateRoute element={<OrderCalendar />} adminOnly />} />
     <Route path="/admin/meal-plans" element={<PrivateRoute element={<AdminMealPlans />} adminOnly />} />
     <Route path="/admin/orders" element={<PrivateRoute element={<AdminOrders />} adminOnly />} />
+    <Route path="/admin/catering-requests" element={<PrivateRoute element={<AdminCateringRequests />} adminOnly />} />
+    <Route path="/admin/newsletter" element={<PrivateRoute element={<AdminNewsletter />} adminOnly />} />
 
     {/* Fallback Route */}
     <Route path="*" element={<NotFoundPage />} />

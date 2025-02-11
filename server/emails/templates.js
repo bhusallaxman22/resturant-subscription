@@ -64,7 +64,7 @@ const footerTemplate = `
   </style>
 `;
 
-export const emailTemplates = {
+const emailTemplates = {
   passwordReset: (name, link) => `
     <div style="
       max-width: 600px;
@@ -221,12 +221,12 @@ export const emailTemplates = {
             🚚 Delivery Details
           </h3>
           <p style="color: #4b5563; margin: 12px 0;">
-            📅 ${new Date(order.deliveryDate).toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
+            📅 ${new Date(order.deliveryDate).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })}
           </p>
           <p style="color: #4b5563; margin: 12px 0;">
             🚚 ${order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1)}
@@ -357,6 +357,134 @@ export const emailTemplates = {
       ${footerTemplate}
     </div>
   `,
+  newsletterEmail: (title, message, email) => `
+  <div style="
+    max-width: 600px;
+    margin: 2rem auto;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(245,245,245,0.9));
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    padding: 40px;
+    animation: fadeInUp 0.8s ease-out;
+  ">
+    <img src="https://i.ibb.co/7YxR0y0/logo.png" 
+         alt="Saffron Kitchen" 
+         style="
+           width: 120px;
+           margin: 0 auto 32px;
+           display: block;
+           filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+           animation: fadeInUp 0.6s ease-out;
+         ">
+
+    <div style="
+      background: rgba(255,255,255,0.7);
+      padding: 32px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(8px);
+      animation: fadeInUp 0.6s 0.2s ease-out both;
+    ">
+      <h2 style="
+        color: #2563eb;
+        font-size: 28px;
+        margin-bottom: 24px;
+        text-align: center;
+      ">
+        📢 ${title}
+      </h2>
+
+      <p style="
+        color: #4b5563;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        text-align: center;
+      ">
+        ${message}
+      </p>
+    </div>
+
+    <p style="text-align: center; margin-top: 24px; font-size: 14px; color: #6b7280;">
+      Don't want to receive these emails?  
+      <a href="${process.env.APP_URL}/unsubscribe?email=${encodeURIComponent(email)}"
+         style="color: #d32f2f; text-decoration: none; font-weight: 500;">
+         Unsubscribe
+      </a>
+    </p>
+
+    ${footerTemplate}
+  </div>
+`,
+
+
+  welcomeEmail: (name, email) => `
+  <div style="
+    max-width: 600px;
+    margin: 2rem auto;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(245,245,245,0.9));
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    padding: 40px;
+    animation: fadeInUp 0.8s ease-out;
+  ">
+    <img src="https://i.ibb.co/7YxR0y0/logo.png" 
+         alt="Saffron Kitchen" 
+         style="
+           width: 120px;
+           margin: 0 auto 32px;
+           display: block;
+           filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+           animation: fadeInUp 0.6s ease-out;
+         ">
+
+    <div style="
+      background: rgba(255,255,255,0.7);
+      padding: 32px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(8px);
+      animation: fadeInUp 0.6s 0.2s ease-out both;
+    ">
+      <h2 style="
+        color: #059669;
+        font-size: 28px;
+        margin-bottom: 24px;
+        text-align: center;
+      ">
+        🎉 Welcome, ${name}!
+      </h2>
+
+      <p style="
+        color: #4b5563;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        text-align: center;
+      ">
+        Thank you for subscribing to Saffron Kitchen's newsletter! 🍽️<br>
+        You’ll receive delicious updates, exclusive offers, and insider news.
+      </p>
+    </div>
+
+    <p style="text-align: center; margin-top: 24px; font-size: 14px; color: #6b7280;">
+      Don't want to receive these emails?  
+      <a href="${process.env.APP_URL}/unsubscribe?email=${encodeURIComponent(email)}"
+         style="color: #d32f2f; text-decoration: none; font-weight: 500;">
+         Unsubscribe
+      </a>
+    </p>
+
+    ${footerTemplate}
+  </div>
+`,
+
 
   deliveryNotificationEmail: (order) => `
     <div style="
@@ -388,13 +516,13 @@ export const emailTemplates = {
           ⏰ Expected arrival time: 10:00 AM - 2:00 PM
         </p>
         ${order.deliveryMethod === "pickup"
-          ? `
+      ? `
           <p style="color: #4b5563; font-size: 16px;">
             📍 Pickup location: 123 Main St, City
           </p>
         `
-          : ""
-        }
+      : ""
+    }
       </div>
       <p style="color: #4b5563; font-size: 16px; margin-top: 20px;">
         Need to make changes? 
@@ -406,3 +534,5 @@ export const emailTemplates = {
     </div>
   `,
 };
+
+module.exports = emailTemplates;
