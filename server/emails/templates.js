@@ -197,6 +197,7 @@ const emailTemplates = {
       day: "numeric"
     });
 
+
     // Use the meals array from the populated mealPlan.
     const meals = order.mealPlan && order.mealPlan.meals ? order.mealPlan.meals : [];
 
@@ -214,7 +215,7 @@ const emailTemplates = {
             <tbody>
             ${meals.map(meal => {
           return (
-          `<tr>
+            `<tr>
             <td>${meal.name}</td>
             <td>1</td>
             <td>$${meal.price}</td>
@@ -237,6 +238,37 @@ const emailTemplates = {
 
     return buildEmail("Order Confirmation", content);
   },
+
+  welcomeEmail: (name, email) => {
+    const content = `
+        <h2>Welcome to Saffron Kitchen, ${name}!</h2>
+        <p>Thank you for subscribing to our newsletter. We’re thrilled to have you!</p>
+        <p>You’ll receive exclusive offers, delicious recipes, and insider updates on new menu items.</p>
+
+        <div class="cta" style="margin: 20px 0;">
+            <a href="http://saffron.bhusallaxman.com.np/">Visit Our Website</a>
+        </div>
+
+        <p>If you ever wish to stop receiving our emails, you can <a href="${process.env.APP_URL}/unsubscribe?email=${encodeURIComponent(email)}">unsubscribe here</a>.</p>
+    `;
+
+    return buildEmail("Welcome to Saffron Kitchen!", content);
+  },
+  newsletterEmail: (title, message, email) => {
+    const content = `
+      <h2>${title}</h2>
+      <p>${message}</p>
+
+      <div class="cta" style="margin: 20px 0;">
+          <a href="http://saffron.bhusallaxman.com.np/">Explore More</a>
+      </div>
+
+      <p>If you no longer wish to receive these emails, you can <a href="${process.env.APP_URL}/unsubscribe?email=${encodeURIComponent(email)}">unsubscribe here</a>.</p>
+  `;
+
+    return buildEmail(title, content);
+  },
+
 
 
   subscriptionUpdateEmail: (changes) => {

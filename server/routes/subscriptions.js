@@ -6,7 +6,7 @@ const { authMiddleware } = require("../middleware/auth");
 const calculateUpcomingDeliveryDates = require("../utils/deliveryDays");
 const { createStripeSubscription, cancelStripeSubscription } = require("../services/stripe");
 const { sendEmail } = require("../services/email");
-const { emailTemplates } = require("../emails/templates");
+const emailTemplates = require("../emails/templates");
 
 const router = express.Router();
 
@@ -107,7 +107,7 @@ router.post("/subscribe", authMiddleware, async (req, res) => {
     }));
 
     await Order.insertMany(orders);
-    
+
     const changes = {
       planName: mealPlan.name,
       deliveryType,
@@ -120,7 +120,7 @@ router.post("/subscribe", authMiddleware, async (req, res) => {
       "Your subscription has been updated",
       emailTemplates.subscriptionUpdateEmail(changes)
     );
-    
+
     res.status(201).json({
       message: "Subscription created successfully.",
       subscription: newSubscription,
